@@ -6,8 +6,8 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
-        MusicPlayerGUIFX musicPlayerGUIFX = new MusicPlayerGUIFX();
-        musicPlayerGUIFX.start(primaryStage);
+        PomodoroGUIX pomodoroGUIX = new PomodoroGUIX();
+        pomodoroGUIX.start(primaryStage);
     }
 
     public static void main(String[] args) {
