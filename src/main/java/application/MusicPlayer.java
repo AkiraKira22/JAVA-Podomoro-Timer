@@ -16,11 +16,11 @@ public class MusicPlayer {
     private int currentSongIndex = 0;
     private boolean isMuted = false;
 
-    private final PomodoroGUIX pomodoroGUIX;
+    private final PomodoroGUIFX pomodoroGUIFX;
     private Song currentSong;
 
-    public MusicPlayer(PomodoroGUIX gui) {
-        this.pomodoroGUIX = gui;
+    public MusicPlayer(PomodoroGUIFX gui) {
+        this.pomodoroGUIFX = gui;
     }
 
     public void loadPlaylist(File playlistFile) {
@@ -61,8 +61,8 @@ public class MusicPlayer {
         setupPlayerEvents();
 
         mediaPlayer.play();
-        pomodoroGUIX.updateSongDisplay(song);
-        pomodoroGUIX.enablePauseButton();
+        pomodoroGUIFX.updateSongDisplay(song);
+        pomodoroGUIFX.enablePauseButton();
     }
 
     public void playNextSong() {
@@ -125,7 +125,7 @@ public class MusicPlayer {
         mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
             if (mediaPlayer.getTotalDuration() != null) {
                 double progress = newTime.toSeconds() / mediaPlayer.getTotalDuration().toSeconds();
-                pomodoroGUIX.setPlaybackSliderValue(progress);
+                pomodoroGUIFX.setPlaybackSliderValue(progress);
             }
         });
     }

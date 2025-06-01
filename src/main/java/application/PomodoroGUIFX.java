@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class PomodoroGUIX extends Application {
+public class PomodoroGUIFX extends Application {
 
     private Label titleLabel;
     private Label artistLabel;
@@ -20,6 +20,9 @@ public class PomodoroGUIX extends Application {
     private Button pauseBtn;
 
     private MusicPlayer musicPlayer;
+
+    // Default directory to open FileChooser in
+    File defaultDir = new File("src/main/resources/music");
 
     @Override
     public void start(Stage primaryStage) {
@@ -41,7 +44,7 @@ public class PomodoroGUIX extends Application {
         VBox root = new VBox(10, titleLabel, artistLabel, durationLabel, playbackSlider, controls);
         root.setPadding(new Insets(20));
 
-        Scene scene = new Scene(root, 520, 240);
+        Scene scene = new Scene(root, 700, 250);
         primaryStage.setTitle("JavaFX Music Player");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -56,9 +59,6 @@ public class PomodoroGUIX extends Application {
         Button nextBtn = new Button("Next");
         Button prevBtn = new Button("Previous");
         Button muteBtn = new Button("Mute");
-
-        // Default directory to open FileChooser in
-        File defaultDir = new File("D:/NTOU/1132/JAVA/~FinalProject/JAVA-Podomoro-Timer/src/main/resources/music");
 
         loadSongBtn.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
@@ -83,9 +83,10 @@ public class PomodoroGUIX extends Application {
         loadPlaylistBtn.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Playlist File");
+            File playlistDir = new File("src/main/resources/music/playlist");
 
-            if (defaultDir.exists()) {
-                fileChooser.setInitialDirectory(defaultDir);
+            if (playlistDir.exists()) {
+                fileChooser.setInitialDirectory(playlistDir);
             }
 
             File file = fileChooser.showOpenDialog(primaryStage);
