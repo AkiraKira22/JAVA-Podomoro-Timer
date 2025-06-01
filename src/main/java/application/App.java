@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
-        PomodoroGUIX pomodoroGUIX = new PomodoroGUIX();
+        PomodoroGUIFX pomodoroGUIX = new PomodoroGUIFX();
         pomodoroGUIX.start(primaryStage);
     }
 
