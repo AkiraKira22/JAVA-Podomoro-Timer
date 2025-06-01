@@ -1,193 +1,347 @@
 package application;
 
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.Slider;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Objects;
+import java.util.Hashtable;
 
-public class MusicPlayerGUI {
-    private final Stage primaryStage;
-    private Label songTitle, songArtist;
-    private Slider playbackSlider;
-    private Button playButton, pauseButton, muteButton;
-    private MusicPlayer musicPlayer;
-    private FileChooser fileChooser;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-    public MusicPlayerGUI(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        buildUI();
-    }
+public class MusicPlayerGUI extends JFrame {
 
-    private void buildUI() {
+    public static final Color FRAME_COLOR = Color.BLACK;
+    public static final Color TEXT_COLOR = Color.WHITE;
+
+    private final MusicPlayer musicPlayer;
+
+    // Allows using file explorer
+    private final JFileChooser jFileChooser;
+
+    private JLabel songTitle, songArtist;
+    private JPanel playbackButtons;
+
+    private JSlider playbackSlider;
+
+    public MusicPlayerGUI() {
+        super("Music Player");
+
+        setSize(400, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setLayout(null);
+
+        // Change frame color
+        getContentPane().setBackground(FRAME_COLOR);
+
         musicPlayer = new MusicPlayer(this);
-        fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("src/main/resources/music"));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3 files", "*.mp3"));
+        jFileChooser = new JFileChooser();
 
-        BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color: black;");
+        // Set default path for file explorer
+        jFileChooser.setCurrentDirectory(new File("src/main/resources/music"));
 
-        // Top Menu
-        MenuBar menuBar = new MenuBar();
-        Menu songMenu = new Menu("Song");
-        MenuItem loadSong = new MenuItem("Load Song");
-        loadSong.setOnAction(e -> loadSong(primaryStage));
-        songMenu.getItems().add(loadSong);
+        // Filter to only show mp3 files
+        jFileChooser.setFileFilter(new FileNameExtensionFilter("MP3", "MP3"));
 
-        Menu playlistMenu = new Menu("Playlist");
-        MenuItem createPlaylist = new MenuItem("Create Playlist");
-        createPlaylist.setOnAction(e -> new MusicPlaylistDialog(primaryStage).show());
-        MenuItem loadPlaylist = new MenuItem("Load Playlist");
-        loadPlaylist.setOnAction(e -> loadPlaylist(primaryStage));
-        playlistMenu.getItems().addAll(createPlaylist, loadPlaylist);
+        addGuiComponents();
+    }
 
-        menuBar.getMenus().addAll(songMenu, playlistMenu);
-        root.setTop(menuBar);
+    private void addGuiComponents() {
+        addToolbar();
 
-        // Center content
-        VBox centerBox = new VBox(10);
-        centerBox.setAlignment(Pos.CENTER);
-        centerBox.setPadding(new Insets(10));
+        // Load image
+        JLabel songImage = new JLabel(loadImage("src/main/resources/record.png"));
+        songImage.setBounds(0, 50, getWidth(), 225);
+        add(songImage);
 
-        ImageView songImage = new ImageView(new Image("src/main/resources/record.png"));
-        songImage.setFitWidth(200);
-        songImage.setFitHeight(200);
-        centerBox.getChildren().add(songImage);
+        // Song title
+        songTitle = new JLabel("Song Title");
+        songTitle.setBounds(0, 285, getWidth() - 10, 30);
+        songTitle.setFont(new Font("Dialog", Font.BOLD, 24));
+        songTitle.setForeground(TEXT_COLOR);
+        songTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        add(songTitle);
 
-        songTitle = new Label("Song Title");
-        songTitle.setTextFill(Color.WHITE);
-        songTitle.setFont(new Font("Arial", 24));
+        // Song artist
+        songArtist = new JLabel("Artist");
+        songArtist.setBounds(0, 315, getWidth() - 10, 30);
+        songArtist.setFont(new Font("Dialog", Font.PLAIN, 24));
+        songArtist.setForeground(TEXT_COLOR);
+        songArtist.setHorizontalAlignment(SwingConstants.CENTER);
+        add(songArtist);
 
-        songArtist = new Label("Artist");
-        songArtist.setTextFill(Color.WHITE);
-        songArtist.setFont(new Font("Arial", 20));
-
-        centerBox.getChildren().addAll(songTitle, songArtist);
-
-        playbackSlider = new Slider();
-        playbackSlider.setMin(0);
-        playbackSlider.setMax(100);
-        playbackSlider.setValue(0);
-        playbackSlider.setPrefWidth(300);
-        playbackSlider.setOnMousePressed(e -> musicPlayer.pauseSong());
-        playbackSlider.setOnMouseReleased(e -> {
-            double value = playbackSlider.getValue();
-            musicPlayer.seekToFrame((int) value);
-            enablePauseButton();
-        });
-
-        centerBox.getChildren().add(playbackSlider);
-        root.setCenter(centerBox);
-
-        // Bottom Controls
-        HBox controls = new HBox(10);
-        controls.setAlignment(Pos.CENTER);
-        controls.setPadding(new Insets(20));
-        controls.setStyle("-fx-background-color: transparent;");
-
-        muteButton = createImageButton("src/main/resources/unmute.png");
-        muteButton.setOnAction(e -> {
-            musicPlayer.toggleMute();
-            String icon;
-            if (musicPlayer.isMuted()) {
-                icon = "src/main/resources/mute.png";
+        // PLayback slider
+        playbackSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+        playbackSlider.setBounds(getWidth()/2 - 300/2, 365, 300, 40);
+        playbackSlider.setBackground(null);
+        playbackSlider.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // Pause the song when the user press the slider
+                musicPlayer.pauseSong();
             }
-            else {
-                icon = "src/main/resources/unmute.png";
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                JSlider source = (JSlider) e.getSource();
+
+                // Get the value from where the user wants the playback at
+                int frame = source.getValue();
+
+                // Update current frame in the musicPlayer to this frame
+                musicPlayer.setCurrentFrame(frame);
+
+                // Update current time in milliseconds
+                musicPlayer.setCurrentTimeInMilliseconds((int) (frame / (2.08 * musicPlayer.getCurrentSong().getFrameRatePerMilliseconds())));
+
+                // Resume song
+                musicPlayer.playCurrentSong();
+
+                // toggle on pause button;
+                enablePauseButton();
             }
-            muteButton.setGraphic(new ImageView(new Image("file:" + icon)));
         });
+        add(playbackSlider);
 
-        playButton = createImageButton("src/main/resources/play.png");
-        playButton.setOnAction(e -> {
-            musicPlayer.playCurrentSong();
-            enablePauseButton();
-        });
-
-        pauseButton = createImageButton("src/main/resources/pause.png");
-        pauseButton.setVisible(false);
-        pauseButton.setOnAction(e -> {
-            musicPlayer.pauseSong();
-            enablePlayButton();
-        });
-
-        Button nextButton = createImageButton("src/main/resources/next.png");
-        nextButton.setOnAction(e -> musicPlayer.playNextSong());
-
-        controls.getChildren().addAll(muteButton, playButton, pauseButton, nextButton);
-        root.setBottom(controls);
-
-        Scene scene = new Scene(root, 400, 600);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Music Player");
-        primaryStage.setResizable(false);
+        // PLayback functionalities
+        addPlaybackButtons();
     }
 
-    public void show() {
-        primaryStage.show();
-    }
-
-    private void loadSong(Stage stage) {
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            Song song = new Song(file.getPath());
-            musicPlayer.loadSong(song);
-        }
-    }
-
-    private void loadPlaylist(Stage stage) {
-        FileChooser playlistChooser = new FileChooser();
-        playlistChooser.setInitialDirectory(new File("src/main/resources/music"));
-        playlistChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Playlist Files", "*.txt"));
-        File file = playlistChooser.showOpenDialog(stage);
-        if (file != null) {
-            musicPlayer.stopSong();
-            musicPlayer.loadPlaylist(file);
-        }
-    }
-
-    private Button createImageButton(String resourcePath) {
-        Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(resourcePath)));
-        ImageView view = new ImageView(img);
-        view.setFitHeight(40);
-        view.setFitWidth(40);
-        Button button = new Button("", view);
-        button.setStyle("-fx-background-color: transparent;");
-        return button;
-    }
-
-    public void updateSliderValue(int frame) {
+    // Update playback slider from MusicPlayer class
+    public void setPlaybackSliderValue(int frame) {
         playbackSlider.setValue(frame);
     }
 
-    public void updateSliderMax(Song song) {
-        playbackSlider.setMax(song.getMp3File().getFrameCount());
+    private void addToolbar() {
+        JToolBar toolBar = new JToolBar();
+        toolBar.setBounds(0, 0, getWidth(), 20);
+
+        // Prevent toolbar from being moved
+        toolBar.setFloatable(false);
+
+        // Add dropdown menu
+        JMenuBar menuBar = new JMenuBar();
+        toolBar.add(menuBar);
+
+        // Song menu
+        JMenu songMenu = new JMenu("Song");
+        menuBar.add(songMenu);
+
+        // Load song
+        JMenuItem loadSong = getJMenuItem();
+        songMenu.add(loadSong);
+
+        // Playlist menu
+        JMenu playlistMenu = new JMenu("Playlist");
+        menuBar.add(playlistMenu);
+
+        JMenuItem createPlaylist = new JMenuItem("Create Playlist");
+        createPlaylist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Load music playlist dialog
+                new MusicPlaylistDialog(MusicPlayerGUI.this).setVisible(true);
+            }
+        });
+        playlistMenu.add(createPlaylist);
+
+        JMenuItem loadPlaylist = getMenuItem();
+        playlistMenu.add(loadPlaylist);
+
+        add(toolBar);
     }
 
-    public void updateSongMetadata(Song song) {
+    private JMenuItem getMenuItem() {
+        JMenuItem loadPlaylist = new JMenuItem("Load Playlist");
+        loadPlaylist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser jFileChooser = new JFileChooser();
+                jFileChooser.setFileFilter(new FileNameExtensionFilter("Playlist", "txt"));
+                jFileChooser.setCurrentDirectory(new File("src/main/resources/music"));
+
+                int result = jFileChooser.showOpenDialog(MusicPlayerGUI.this);
+                File selectedFile = jFileChooser.getSelectedFile();
+
+                if (result == JFileChooser.APPROVE_OPTION && selectedFile != null) {
+                    // Stop the music
+                    musicPlayer.stopSong();
+
+                    // Load playlist
+                    musicPlayer.loadPlaylist(selectedFile);
+                }
+            }
+        });
+        return loadPlaylist;
+    }
+
+    private JMenuItem getJMenuItem() {
+        JMenuItem loadSong = new JMenuItem("Load Song");
+        loadSong.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // an int is returned to let us know what the user did
+                int result = jFileChooser.showOpenDialog(MusicPlayerGUI.this);
+                File selectedFile = jFileChooser.getSelectedFile();
+
+                // Song will only load if user presses open button
+                if (result == JFileChooser.APPROVE_OPTION && selectedFile != null) {
+                    // create a song obj based on selected file
+                    Song song = new Song(selectedFile.getPath());
+                    
+                    // load song into music player
+                    musicPlayer.loadSong(song);
+
+                    // update song title and artist
+                    updateSongTitleAndArtist(song);
+
+                    // update playback slider
+                    updatePlaybackSlider(song);
+
+                    // Switch play to pause button
+                    enablePauseButton();
+
+                    // Switch pause to play button
+                    // enablePlayButton();
+                }
+            }
+        });
+        return loadSong;
+    }
+
+    private void addPlaybackButtons(){
+        playbackButtons = new JPanel();
+        playbackButtons.setBounds(0, 435, getWidth() - 10, 80);
+        playbackButtons.setBackground(null);
+
+        // Mute Button
+        JButton muteButton = new JButton(loadImage("src/main/resources/unmute.png"));
+        muteButton.setBorderPainted(false);
+        muteButton.setBackground(null);
+        muteButton.addActionListener(e -> {
+            musicPlayer.toggleMute();
+            if (musicPlayer.isMuted()) {
+                muteButton.setIcon(loadImage("src/main/resources/mute.png"));
+            }
+            else {
+                muteButton.setIcon(loadImage("src/main/resources/unmute.png"));
+            }
+        });
+        playbackButtons.add(muteButton);
+
+        // Play button
+        JButton playButton = new JButton(loadImage("src/main/resources/play.png"));
+        playButton.setBorderPainted(false);
+        playButton.setBackground(null);
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enablePauseButton();
+                musicPlayer.playCurrentSong();
+            }
+        });
+        playbackButtons.add(playButton);
+
+        // Pause button
+        JButton pauseButton = new JButton(loadImage("src/main/resources/pause.png"));
+        pauseButton.setBorderPainted(false);
+        pauseButton.setBackground(null);
+        pauseButton.setVisible(false);
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enablePlayButton();
+                musicPlayer.pauseSong();
+            }
+        }); 
+        playbackButtons.add(pauseButton);
+
+        // Next button
+        JButton nextButton = new JButton(loadImage("src/main/resources/next.png"));
+        nextButton.setBorderPainted(false);
+        nextButton.setBackground(null);
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                musicPlayer.playNextSong();
+            }
+        });
+        playbackButtons.add(nextButton);
+
+        add(playbackButtons);
+    }
+
+    public void updateSongTitleAndArtist(Song song) {
         songTitle.setText(song.getSongTitle());
         songArtist.setText(song.getSongArtist());
     }
 
-    public void enablePauseButton() {
-        playButton.setVisible(false);
-        pauseButton.setVisible(true);
+    public void updatePlaybackSlider(Song song) {
+        // Update max count for slider
+        playbackSlider.setMaximum(song.getMp3File().getFrameCount());
+
+        // Create song length label
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+
+        // Beginning will be 00:00
+        JLabel labelBeginning = new JLabel("00:00");
+        labelBeginning.setFont(new Font("Dialog", Font.BOLD, 18));
+        labelBeginning.setForeground(TEXT_COLOR);
+
+        // End will vary depending on the song
+        JLabel labelEnd = new JLabel(song.getSongLength());
+        labelEnd.setFont(new Font("Dialog", Font.BOLD, 18));
+        labelEnd.setForeground(TEXT_COLOR);
+
+        labelTable.put(0, labelBeginning);
+        labelTable.put(song.getMp3File().getFrameCount(), labelEnd);
+
+        playbackSlider.setLabelTable(labelTable);
+        playbackSlider.setPaintLabels(true);
     }
 
+    public void enablePauseButton() {
+        // retrieve ref to play button
+        JButton playButton = (JButton) playbackButtons.getComponent(1);
+        JButton pauseButton = (JButton) playbackButtons.getComponent(2);
+
+        // Disable play button
+        playButton.setVisible(false);
+
+        // Enable pause button
+        pauseButton.setVisible(true);
+    }
+    
     public void enablePlayButton() {
-        playButton.setVisible(true);
+        // retrieve ref to play button
+        JButton playButton = (JButton) playbackButtons.getComponent(1);
+        JButton pauseButton = (JButton) playbackButtons.getComponent(2);
+
+        // Disable pause button
         pauseButton.setVisible(false);
+
+        // Enable play button
+        playButton.setVisible(true);
+    }
+
+    private ImageIcon loadImage(String imagePath) {
+        try {
+            // Read image from path
+            BufferedImage image = ImageIO.read(new File(imagePath));
+
+            // return image icon to render
+            return new ImageIcon(image);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

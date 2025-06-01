@@ -1,119 +1,138 @@
 package application;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class MusicPlaylistDialog extends Stage {
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
+public class MusicPlaylistDialog extends JDialog{
+
+    // Store all the paths to be written to a txt file (when we load a playlist)
     private final ArrayList<String> songPaths;
-    private final VBox songContainer;
 
-    public MusicPlaylistDialog(Stage owner) {
+    public MusicPlaylistDialog(MusicPlayerGUI musicPlayerGUI) {
         songPaths = new ArrayList<>();
 
+        // Configure dialog
         setTitle("Create Playlist");
+        setSize(400, 400);
         setResizable(false);
-        initModality(Modality.APPLICATION_MODAL);
-        initOwner(owner);
+        getContentPane().setBackground(MusicPlayerGUI.FRAME_COLOR);
+        setLayout(null);
+        setModal(true); // This property makes it so thet the dialog has to be closed to give focus
+        setLocationRelativeTo(musicPlayerGUI);
 
-        BorderPane root = new BorderPane();
-        root.setPadding(new Insets(10));
-        root.setStyle("-fx-background-color: #000000;");
-
-        songContainer = new VBox(5);
-        songContainer.setPadding(new Insets(5));
-        ScrollPane scrollPane = new ScrollPane(songContainer);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(300);
-        root.setCenter(scrollPane);
-
-        HBox buttonsBox = new HBox(20);
-        buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.setPadding(new Insets(10, 0, 0, 0));
-
-        Button addSongButton = new Button("Add");
-        addSongButton.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        addSongButton.setOnAction(e -> openFileChooser());
-
-        Button savePlaylistButton = new Button("Save");
-        savePlaylistButton.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        savePlaylistButton.setOnAction(e -> savePlaylist());
-
-        buttonsBox.getChildren().addAll(addSongButton, savePlaylistButton);
-        root.setBottom(buttonsBox);
-
-        Scene scene = new Scene(root, 400, 400);
-        setScene(scene);
+        addDialogComponents();
     }
 
-    private void openFileChooser() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select MP3 files");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
-        fileChooser.setInitialDirectory(new File("src/main/resources/music"));
+    private void addDialogComponents() {
+        // Container to hold each song path
+        JPanel songContainer = new JPanel();
+        songContainer.setLayout(new BoxLayout(songContainer, BoxLayout.Y_AXIS));
+        songContainer.setBounds((int)(getWidth() * 0.025), 10, (int)(getWidth() * 0.90), (int)(getHeight() * 0.75));
+        add(songContainer);
 
-        File selectedFile = fileChooser.showOpenDialog(this);
-        if (selectedFile != null) {
-            String path = selectedFile.getPath();
-            songPaths.add(path);
+        // Add song button
+        JButton addSongButton = getJButton(songContainer);
+        add(addSongButton);
 
-            Label pathLabel = new Label(path);
-            pathLabel.setStyle("-fx-font-weight: bold; -fx-border-color: black; -fx-padding: 3 5 3 5;");
-            songContainer.getChildren().add(pathLabel);
-        }
-    }
+        // Save playlist button
+        JButton savePlaylistButton = new JButton("Save");
+        savePlaylistButton.setBounds(215, (int)(getHeight() * 0.80), 100, 25);
+        savePlaylistButton.setFont(new Font("Dialog", Font.BOLD, 14));
+        savePlaylistButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    JFileChooser jFileChooser = new JFileChooser();
+                    jFileChooser.setCurrentDirectory(new File("src/main/resources/music"));
+                    int result = jFileChooser.showSaveDialog(MusicPlaylistDialog.this);
 
-    private void savePlaylist() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Playlist");
-        fileChooser.setInitialDirectory(new File("src/main/resources/music"));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        // Use getSelectedFile() to get reference to the file that we are about to save
+                        BufferedWriter bufferedWriter = getBufferedWriter(jFileChooser);
+                        bufferedWriter.close();
 
-        File selectedFile = fileChooser.showSaveDialog(this);
-        if (selectedFile != null) {
-            try {
-                String fileName = selectedFile.getName();
-                if (!fileName.toLowerCase().endsWith(".txt")) {
-                    selectedFile = new File(selectedFile.getParentFile(), fileName + ".txt");
+                        // Display success dialog
+                        JOptionPane.showMessageDialog(MusicPlaylistDialog.this, "Successfully Created Playlist!");
+
+                        // Close the dialog
+                        MusicPlaylistDialog.this.dispose();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
-
-                BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
-                for (String path : songPaths) {
-                    writer.write(path);
-                    writer.newLine();
-                }
-                writer.close();
-
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.initOwner(this);
-                alert.setTitle("Success");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Created Playlist!");
-                alert.showAndWait();
-
-                close();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.initOwner(this);
-                alert.setTitle("Error");
-                alert.setHeaderText("Failed to Save Playlist");
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
             }
-        }
+
+            private BufferedWriter getBufferedWriter(JFileChooser jFileChooser) throws IOException {
+                FileWriter fileWriter = getFileWriter(jFileChooser);
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+                // Iterate through the song paths list and write each string into the file
+                // Each song will be written in their own row
+                for (String songPath : songPaths) {
+                    bufferedWriter.write(songPath + "\n");
+                }
+                return bufferedWriter;
+            }
+
+            private FileWriter getFileWriter(JFileChooser jFileChooser) throws IOException {
+                File selectedFile = jFileChooser.getSelectedFile();
+
+                // Convert to .txt if not yet already
+                // Check if file is in .txt format
+                if (!selectedFile.getName().substring(selectedFile.getName().length() - 4).equalsIgnoreCase(".txt")) {
+                    selectedFile = new File(selectedFile.getAbsoluteFile() + ".txt");
+                }
+
+                // Create the new file at the designated directory
+                selectedFile.createNewFile();
+
+                // Write all the song paths into this file
+                return new FileWriter(selectedFile);
+            }
+        });
+        add(savePlaylistButton);
+    }
+
+    private JButton getJButton(JPanel songContainer) {
+        JButton addSongButton = new JButton("Add");
+        addSongButton.setBounds(60, (int)(getHeight() * 0.80), 100, 25);
+        addSongButton.setFont(new Font("Dialog", Font.BOLD, 14));
+        addSongButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Open file explorer
+                JFileChooser jFileChooser = new JFileChooser();
+                jFileChooser.setFileFilter(new FileNameExtensionFilter("MP3", "mp3"));
+                jFileChooser.setCurrentDirectory(new File("src/main/resources/music"));
+                int result = jFileChooser.showOpenDialog(MusicPlaylistDialog.this);
+
+                File selectedFile = jFileChooser.getSelectedFile();
+                if (result == JFileChooser.APPROVE_OPTION && selectedFile != null) {
+                    JLabel filePathLabel = new JLabel(selectedFile.getPath());
+                    filePathLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+                    filePathLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+                    // Add to the list
+                    songPaths.add(filePathLabel.getText());
+
+                    // Add to container
+                    songContainer.add(filePathLabel);
+
+                    // Refreshes dialog to show newly added JLabel
+                    songContainer.revalidate();
+                }
+            }
+        });
+        return addSongButton;
     }
 }
