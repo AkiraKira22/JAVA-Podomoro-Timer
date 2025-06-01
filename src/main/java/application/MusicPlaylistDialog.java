@@ -53,7 +53,7 @@ public class MusicPlaylistDialog extends JDialog{
             public void actionPerformed(ActionEvent e) {
                 try {
                     JFileChooser jFileChooser = new JFileChooser();
-                    jFileChooser.setCurrentDirectory(new File("src/main/resources/music"));
+                    jFileChooser.setCurrentDirectory(new File("src/main/resources/music/playlist"));
                     int result = jFileChooser.showSaveDialog(MusicPlaylistDialog.this);
 
                     if (result == JFileChooser.APPROVE_OPTION) {
@@ -113,7 +113,7 @@ public class MusicPlaylistDialog extends JDialog{
                 // Open file explorer
                 JFileChooser jFileChooser = new JFileChooser();
                 jFileChooser.setFileFilter(new FileNameExtensionFilter("MP3", "mp3"));
-                jFileChooser.setCurrentDirectory(new File("src/main/resources/music"));
+                jFileChooser.setCurrentDirectory(new File("src/main/resources/music/playlist"));
                 int result = jFileChooser.showOpenDialog(MusicPlaylistDialog.this);
 
                 File selectedFile = jFileChooser.getSelectedFile();

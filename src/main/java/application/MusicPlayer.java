@@ -77,6 +77,29 @@ public class MusicPlayer extends PlaybackListener{
         }
     }
 
+    public void toggleMute() {
+        if (volumeControl == null) {
+            initializeVolumeControl();
+        }
+
+        if (volumeControl != null) {
+            if (isMuted) {
+                volumeControl.setValue(initialVolume);
+            }
+            else {
+                volumeControl.setValue(volumeControl.getMinimum());
+            }
+            isMuted = !isMuted;
+        }
+        else {
+            System.err.println("Volume control not available.");
+        }
+    }
+
+    public boolean isMuted() {
+        return isMuted;
+    }
+
     // Constructor
     public MusicPlayer(MusicPlayerGUI musicPlayerGUI) {
         this.musicPlayerGUI = musicPlayerGUI;
@@ -272,29 +295,6 @@ public class MusicPlayer extends PlaybackListener{
         if (volumeControl == null) {
             initializeVolumeControl();
         }
-    }
-
-    public void toggleMute() {
-        if (volumeControl == null) {
-            initializeVolumeControl();
-        }
-
-        if (volumeControl != null) {
-            if (isMuted) {
-                volumeControl.setValue(initialVolume);
-            }
-            else {
-                volumeControl.setValue(volumeControl.getMinimum());
-            }
-            isMuted = !isMuted;
-        }
-        else {
-            System.err.println("Volume control not available.");
-        }
-    }
-
-    public boolean isMuted() {
-        return isMuted;
     }
     
     @Override

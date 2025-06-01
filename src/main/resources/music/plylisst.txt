@@ -1,4 +1,0 @@
-D:\Study\Java\JAVA-Podomoro-Timer-main\JAVA-Podomoro-Timer\src\assets\sample_music\Wind Riders - Asher Fulero.mp3
-D:\Study\Java\JAVA-Podomoro-Timer-main\JAVA-Podomoro-Timer\src\assets\sample_music\Tropic Fuse - French Fuse.mp3
-D:\Study\Java\JAVA-Podomoro-Timer-main\JAVA-Podomoro-Timer\src\assets\sample_music\Auld Lang Syne (Instrumental) - Jingle Punks.mp3
-D:\Study\Java\JAVA-Podomoro-Timer-main\JAVA-Podomoro-Timer\src\assets\sample_music\Tropic Fuse - French Fuse.mp3
