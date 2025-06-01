@@ -21,6 +21,9 @@ public class PomodoroGUIFX extends Application {
 
     private MusicPlayer musicPlayer;
 
+    // Default directory to open FileChooser in
+    File defaultDir = new File("src/main/resources/music");
+
     @Override
     public void start(Stage primaryStage) {
         musicPlayer = new MusicPlayer(this);
@@ -57,9 +60,6 @@ public class PomodoroGUIFX extends Application {
         Button prevBtn = new Button("Previous");
         Button muteBtn = new Button("Mute");
 
-        // Default directory to open FileChooser in
-        File defaultDir = new File("/src/main/resources/music");
-
         loadSongBtn.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open MP3 File");
@@ -83,9 +83,10 @@ public class PomodoroGUIFX extends Application {
         loadPlaylistBtn.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Playlist File");
+            File playlistDir = new File("src/main/resources/music/playlist");
 
-            if (defaultDir.exists()) {
-                fileChooser.setInitialDirectory(defaultDir);
+            if (playlistDir.exists()) {
+                fileChooser.setInitialDirectory(playlistDir);
             }
 
             File file = fileChooser.showOpenDialog(primaryStage);

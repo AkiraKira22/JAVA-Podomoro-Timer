@@ -16,6 +16,9 @@ public class MusicPlaylistDialogFX {
 
     private final List<String> songPaths = new ArrayList<>();
 
+    // Default directory to open FileChooser in
+    File defaultDir = new File("src/main/resources/music");
+
     public void show(Stage owner) {
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Create Playlist");
@@ -35,6 +38,9 @@ public class MusicPlaylistDialogFX {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
             fileChooser.setTitle("Select MP3 File");
+            if (defaultDir.exists()) {
+                fileChooser.setInitialDirectory(defaultDir);
+            }
             File selected = fileChooser.showOpenDialog(dialogStage);
             if (selected != null) {
                 String path = selected.getAbsolutePath();
@@ -50,6 +56,10 @@ public class MusicPlaylistDialogFX {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Playlist");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            File playlistDir = new File("src/main/resources/music/playlist");
+            if (playlistDir.exists()) {
+                fileChooser.setInitialDirectory(playlistDir);
+            }
             File file = fileChooser.showSaveDialog(dialogStage);
             if (file != null) {
                 if (!file.getName().endsWith(".txt")) {
