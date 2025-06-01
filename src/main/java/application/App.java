@@ -1,18 +1,16 @@
 package application;
 
-import javax.swing.*;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-public class App {
+public class App extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        MusicPlayerGUIFX musicPlayerGUIFX = new MusicPlayerGUIFX();
+        musicPlayerGUIFX.start(primaryStage);
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MusicPlayerGUI().setVisible(true);
-
-                /*Song song = new Song("src\\assets\\sample_music\\Wind Riders - Asher Fulero.mp3");
-                System.out.println(song.getSongTitle());
-                System.out.println(song.getSongArtist());*/
-            }
-        });
+        launch(args);
     }
 }
