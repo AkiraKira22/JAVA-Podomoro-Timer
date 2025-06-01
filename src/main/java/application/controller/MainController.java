@@ -18,6 +18,8 @@ public class MainController {
     private boolean isRunning = false;
     private TimerModel timerModel;
     private boolean isFocusState = true;
+    private int focusDuration = 25;
+    private int restDuration = 5;
 
     public MainController() {
         timerModel = new TimerModel();
@@ -39,12 +41,12 @@ public class MainController {
         if (isFocusState) { // Transition to Rest
             isFocusState = false;
             updateStateDisplay();
-            timerModel.setTimer(1, 2); // 5 minutes rest
+            timerModel.setTimer(restDuration, 0); 
             timerModel.startTimer();
         } else { // Transition to Focus
             isFocusState = true;
             updateStateDisplay();
-            timerModel.setTimer(25, 0); // 25 minutes focus
+            timerModel.setTimer(focusDuration, 0); 
             timerModel.startTimer();
         }
     }
@@ -84,6 +86,15 @@ public class MainController {
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/application/settings.fxml"));
             javafx.scene.Parent root = loader.load();
+
+            SettingsController settingsController = loader.getController();
+            settingsController.setTimerPresetListener((focus, rest) -> {
+                this.focusDuration = focus;
+                this.restDuration = rest;
+                timerModel.setTimer(focusDuration, 0);
+                updateTimerDisplay();
+            });
+
             javafx.stage.Stage stage = new javafx.stage.Stage();
             stage.setTitle("Settings");
             stage.setScene(new javafx.scene.Scene(root));
@@ -94,7 +105,17 @@ public class MainController {
         }
     }
    
-    
+    @FXML
+    private void handleTimerClicked(javafx.scene.input.MouseEvent event) {
+        if (event.getClickCount() == 2) { // Double-click detect
+            if (isFocusState) {
+                timerModel.setTimer(focusDuration, 0); 
+            } else {
+                timerModel.setTimer(restDuration, 0); 
+            }
+            updateTimerDisplay();
+        }
+    }
 
-    // Additional methods to update the timer display can be added here
+
 }

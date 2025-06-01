@@ -4,7 +4,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" prefHeight="300" prefWidth="400" xmlns="http://javafx.com/javafx">
+<AnchorPane xmlns:fx="http://javafx.com/fxml" 
+            fx:controller="application.controller.SettingsController"
+            prefHeight="300" prefWidth="400" xmlns="http://javafx.com/javafx">
     <children>
         <Label text="Settings" layoutX="150" layoutY="20" textAlignment="CENTER">
             <font>
@@ -14,8 +16,8 @@
 
         <MenuBar layoutY="50">
             <Menu text="Timer">
-                <MenuItem text="25 + 5 Minutes" fx:id="preset25_5" />
-                <MenuItem text="50 + 10 Minutes" fx:id="preset50_10" />
+                <MenuItem text="25 + 5 Minutes" fx:id="presetA" />
+                <MenuItem text="50 + 10 Minutes" fx:id="presetB" />
             </Menu>
             <Menu text="Music">
                 <MenuItem text="Open Music Window" fx:id="openMusic" />
