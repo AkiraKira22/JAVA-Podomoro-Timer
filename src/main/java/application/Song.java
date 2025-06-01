@@ -17,63 +17,38 @@ public class Song {
     private Mp3File mp3File;
     private double frameRatePerMilliseconds;
 
-    public Song(String filePath) {
+    public Song (String filePath) {
         this.filePath = filePath;
         try {
             mp3File = new Mp3File(filePath);
-            if (mp3File.getFrameCount() > 0 && mp3File.getLengthInMilliseconds() > 0) {
-                frameRatePerMilliseconds = (double) mp3File.getFrameCount() / mp3File.getLengthInMilliseconds();
-            }
-            else {
-                frameRatePerMilliseconds = 0.0;
-            }
+            frameRatePerMilliseconds = (double) mp3File.getFrameCount() / mp3File.getLengthInMilliseconds();
             songLength = convertToSongLengthFormat();
+            
+            // Use jaudiotagger library to create an audiofile obj to read mp3 file's info
+            AudioFile audioFile = AudioFileIO.read(new File(filePath));
+            Tag tag = audioFile.getTag();
 
-            File audioFile = new File(filePath);
-            if (audioFile.exists()) {
-                AudioFile audio = AudioFileIO.read(audioFile);
-                Tag tag = audio.getTag();
-
-                if (tag != null) {
-                    songTitle = tag.getFirst(FieldKey.TITLE);
-                    songArtist = tag.getFirst(FieldKey.ARTIST);
-
-                    // Use filename if metadata is missing
-                    if (songTitle == null || songTitle.isEmpty()) {
-                        songTitle = audioFile.getName().replace(".mp3", "");
-                    }
-                    if (songArtist == null || songArtist.isEmpty()) {
-                        songArtist = "Unknown Artist";
-                    }
-                }
-                else {
-                    songTitle = audioFile.getName().replace(".mp3", "");
-                    songArtist = "Unknown Artist";
-                }
+            if (tag != null) {
+                songTitle = tag.getFirst(FieldKey.TITLE);
+                songArtist = tag.getFirst(FieldKey.ARTIST);
             }
             else {
-                songTitle = "File not found";
+                songTitle = "N/A";
                 songArtist = "N/A";
             }
         } catch (Exception e) {
             e.printStackTrace();
-            songTitle = "N/A";
-            songArtist = "N/A";
-            songLength = "00:00";
-            mp3File = null;
-            frameRatePerMilliseconds = 0.0;
         }
     }
 
     private String convertToSongLengthFormat() {
-        if (mp3File == null) return "00:00";
+        long minutes = mp3File.getLengthInSeconds() / 60;
+        long seconds = mp3File.getLengthInSeconds() %60;
 
-        long totalSeconds = mp3File.getLengthInSeconds();
-        long minutes = totalSeconds / 60;
-        long seconds = totalSeconds % 60;
         return String.format("%02d:%02d", minutes, seconds);
     }
 
+    // Getter
     public String getSongTitle() {
         return songTitle;
     }
