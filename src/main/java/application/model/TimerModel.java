@@ -16,6 +16,12 @@ public class TimerModel {
         this.isRunning = false;
     }
 
+    private Runnable onTimerFinished;
+
+    public void setOnTimerFinished(Runnable onTimerFinished) {
+        this.onTimerFinished = onTimerFinished;
+    }
+
     public IntegerProperty minutesProperty() {
         return minutes;
     }
@@ -32,6 +38,7 @@ public class TimerModel {
                 protected Void call() throws Exception {
                     while (isRunning && (minutes.get() > 0 || seconds.get() > 0)) {
                         Thread.sleep(1000);
+                        if (!isRunning) break;
                         if (seconds.get() == 0) {
                             if (minutes.get() > 0) {
                                 minutes.set(minutes.get() - 1);
@@ -42,6 +49,10 @@ public class TimerModel {
                         }
                     }
                     isRunning = false;
+                    // Notify when timer finishes
+                    if ((minutes.get() == 0 && seconds.get() == 0) && onTimerFinished != null) {
+                        javafx.application.Platform.runLater(onTimerFinished);
+                    }
                     return null;
                 }
             };

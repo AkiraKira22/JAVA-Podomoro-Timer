@@ -30,34 +30,29 @@ public class MainController {
         timerModel.minutesProperty().addListener((obs, oldVal, newVal) -> updateTimerDisplay());
         timerModel.secondsProperty().addListener((obs, oldVal, newVal) -> updateTimerDisplay());
 
-        // times up listener
-        timerModel.minutesProperty().addListener((obs, oldVal, newVal) -> checkTransition());
-        timerModel.secondsProperty().addListener((obs, oldVal, newVal) -> checkTransition());
+        // Set timer finished callback
+        timerModel.setOnTimerFinished(this::onTimerFinished);
     }
 
-    private void checkTransition() {
-        if (timerModel.minutesProperty().get() == 0 && timerModel.secondsProperty().get() == 0 && isRunning) {
-            playBellSound();
-            if (isFocusState) { // Transition to Rest
-                isFocusState = false;
-                // stateLabel.setText("Rest");
-                updateStateDisplay();
-                timerModel.setTimer(5, 0); // 5 minutes rest
-                timerModel.startTimer();
-            } else { // Transition to Focus
-                isFocusState = true;
-                // stateLabel.setText("Focus");
-                updateStateDisplay();
-                timerModel.setTimer(25, 0); // 25 minutes focus
-                timerModel.startTimer();
-            }
+    private void onTimerFinished() {
+        playBellSound();
+        if (isFocusState) { // Transition to Rest
+            isFocusState = false;
+            updateStateDisplay();
+            timerModel.setTimer(1, 2); // 5 minutes rest
+            timerModel.startTimer();
+        } else { // Transition to Focus
+            isFocusState = true;
+            updateStateDisplay();
+            timerModel.setTimer(25, 0); // 25 minutes focus
+            timerModel.startTimer();
         }
     }
 
     private void playBellSound() {
         String sound = getClass().getResource("/application/bell.wav").toString();
-        AudioClip clip = new AudioClip(sound);
-        clip.play();
+        AudioClip bell = new AudioClip(sound);
+        bell.play();
     }
 
     private void updateStateDisplay() {
