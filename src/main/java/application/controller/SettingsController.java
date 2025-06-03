@@ -14,8 +14,8 @@ public class SettingsController {
 
     // @FXML private MenuButton timerMenu;
     // @FXML private MenuButton musicMenu;
-    @FXML private CheckMenuItem dndToggle;
-    @FXML private MenuItem openMusic;
+    @FXML private CheckBox dndToggle;
+    @FXML private Button openMusic;
     @FXML private MenuButton timerMenuButton;
     @FXML private MenuItem presetTest;
     @FXML private MenuItem preset25_5;

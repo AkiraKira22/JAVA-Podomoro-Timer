@@ -20,19 +20,17 @@ public class MainController {
     @FXML private Button settingsButton;
 
     private boolean isRunning = false;
-    private TimerModel timerModel;
+    private final TimerModel timerModel;
     private boolean isFocusState = true;
     private int focusDuration = 25;
     private int restDuration = 5;
     private int totalTimeInSeconds;
     public static javafx.stage.Stage settingsStage = null; // Add this line
     public static javafx.stage.Stage musicPlayerStage = null; // Change from private to public
-    private Stage primaryStage;
 
     public void setPrimaryStage(Stage stage) {
-        this.primaryStage = stage;
         // Listen for main window close and close all secondary windows
-        primaryStage.setOnCloseRequest(e -> {
+        stage.setOnCloseRequest(e -> {
             if (settingsStage != null) {
                 settingsStage.close();
             }
