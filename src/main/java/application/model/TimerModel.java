@@ -1,18 +1,22 @@
 package application.model;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.concurrent.Task;
+import javafx.util.Duration;
 
 public class TimerModel {
     private final IntegerProperty minutes;
     private final IntegerProperty seconds;
-    private Task<Void> timerTask;
+
+    private Timeline timeline;
     private boolean isRunning;
 
     public TimerModel() {
-        this.minutes = new SimpleIntegerProperty(1); // Default to 25 minutes
-        this.seconds = new SimpleIntegerProperty(5);
+        this.minutes = new SimpleIntegerProperty(25); // Default to 25 minutes
+        this.seconds = new SimpleIntegerProperty(0);
         this.isRunning = false;
     }
 
@@ -31,48 +35,22 @@ public class TimerModel {
     }
 
     public void startTimer() {
-        if (!isRunning) {
-            isRunning = true;
-            timerTask = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    while (isRunning && (minutes.get() > 0 || seconds.get() > 0)) {
-                        Thread.sleep(1000);
-                        if (!isRunning) break;
-                        if (seconds.get() == 0) {
-                            if (minutes.get() > 0) {
-                                minutes.set(minutes.get() - 1);
-                                seconds.set(59);
-                            }
-                        } else {
-                            seconds.set(seconds.get() - 1);
-                        }
-                    }
-                    isRunning = false;
-                    // Notify when timer finishes
-                    if ((minutes.get() == 0 && seconds.get() == 0) && onTimerFinished != null) {
-                        javafx.application.Platform.runLater(onTimerFinished);
-                    }
-                    return null;
-                }
-            };
-            Thread timerThread = new Thread(timerTask);
-            timerThread.setDaemon(true);
-            timerThread.start();
+        if (isRunning) return;
+
+        isRunning = true;
+        if (timeline == null) {
+            timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> tick()));
+            timeline.setCycleCount(Timeline.INDEFINITE);
         }
+        timeline.play();
     }
+
 
     public void pauseTimer() {
-        isRunning = false;
-        if (timerTask != null) {
-            timerTask.cancel();
+        if (timeline != null) {
+            timeline.pause();
         }
-    }
-
-    public void resetTimer() {
         isRunning = false;
-        minutes.set(25); // Reset to default 25 minutes
-        seconds.set(0);
     }
 
     public void setTimer(int minutes, int seconds) {
@@ -82,5 +60,27 @@ public class TimerModel {
 
     public String getFormattedTime() {
         return String.format("%02d:%02d", minutes.get(), seconds.get());
+    }
+
+    private void tick() {
+        int sec = seconds.get();
+        int min = minutes.get();
+
+        if (sec == 0) {
+            if (min == 0) {
+                pauseTimer();
+                if (onTimerFinished != null) {
+                    onTimerFinished.run();
+                }
+                return;
+            }
+            else {
+                minutes.set(min - 1);
+                seconds.set(59);
+            }
+        }
+        else {
+            seconds.set(sec - 1);
+        }
     }
 }

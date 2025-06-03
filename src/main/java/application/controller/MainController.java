@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.stage.Stage;
 
 public class MainController {
@@ -18,18 +20,17 @@ public class MainController {
     @FXML private Button settingsButton;
 
     private boolean isRunning = false;
-    private TimerModel timerModel;
+    private final TimerModel timerModel;
     private boolean isFocusState = true;
     private int focusDuration = 25;
     private int restDuration = 5;
+    private int totalTimeInSeconds;
     public static javafx.stage.Stage settingsStage = null; // Add this line
     public static javafx.stage.Stage musicPlayerStage = null; // Change from private to public
-    private Stage primaryStage;
 
     public void setPrimaryStage(Stage stage) {
-        this.primaryStage = stage;
         // Listen for main window close and close all secondary windows
-        primaryStage.setOnCloseRequest(e -> {
+        stage.setOnCloseRequest(e -> {
             if (settingsStage != null) {
                 settingsStage.close();
             }
@@ -48,11 +49,20 @@ public class MainController {
     public void initialize() {
         updateTimerDisplay();
 
-        timerModel.minutesProperty().addListener((obs, oldVal, newVal) -> updateTimerDisplay());
-        timerModel.secondsProperty().addListener((obs, oldVal, newVal) -> updateTimerDisplay());
+        totalTimeInSeconds = focusDuration * 60;
 
+        timerModel.minutesProperty().addListener((obs, oldVal, newVal) -> {
+            updateTimerDisplay();
+            drawProgressCircle();
+        });
+        timerModel.secondsProperty().addListener((obs, oldVal, newVal) -> {
+            updateTimerDisplay();
+            drawProgressCircle();
+        });
         // Set timer finished callback
         timerModel.setOnTimerFinished(this::onTimerFinished);
+
+        drawProgressCircle();
     }
 
     private void onTimerFinished() {
@@ -60,14 +70,15 @@ public class MainController {
         if (isFocusState) { // Transition to Rest
             isFocusState = false;
             updateStateDisplay();
-            timerModel.setTimer(restDuration, 0); 
-            timerModel.startTimer();
+            totalTimeInSeconds = restDuration * 60;
+            timerModel.setTimer(restDuration, 0);
         } else { // Transition to Focus
             isFocusState = true;
             updateStateDisplay();
-            timerModel.setTimer(focusDuration, 0); 
-            timerModel.startTimer();
+            totalTimeInSeconds = focusDuration * 60;
+            timerModel.setTimer(focusDuration, 0);
         }
+        timerModel.startTimer();
     }
 
     private void playBellSound() {
@@ -119,9 +130,15 @@ public class MainController {
 
             SettingsController settingsController = loader.getController();
             settingsController.setTimerPresetListener((focus, rest) -> {
+                // Stop timer first
+                timerModel.pauseTimer();
+                isRunning = false;
+                playPauseButton.setText("Play");
+
                 this.focusDuration = focus;
                 this.restDuration = rest;
-                timerModel.setTimer(focusDuration, 0);
+                totalTimeInSeconds = isFocusState ? focus * 60 : rest * 60;
+                timerModel.setTimer(isFocusState ? focusDuration : restDuration, 0);
                 updateTimerDisplay();
             });
 
@@ -140,11 +157,48 @@ public class MainController {
     private void handleTimerClicked(javafx.scene.input.MouseEvent event) {
         if (event.getClickCount() == 2) { // Double-click detect
             if (isFocusState) {
-                timerModel.setTimer(focusDuration, 0); 
+                totalTimeInSeconds = focusDuration * 60;
+                timerModel.setTimer(focusDuration, 0);
             } else {
-                timerModel.setTimer(restDuration, 0); 
+                totalTimeInSeconds = restDuration * 60;
+                timerModel.setTimer(restDuration, 0);
             }
             updateTimerDisplay();
         }
+    }
+
+
+    @FXML
+    private javafx.scene.canvas.Canvas progressCanvas;
+
+    private void drawProgressCircle() {
+        javafx.application.Platform.runLater(() -> {
+            if (totalTimeInSeconds == 0) return;
+
+            double currentTime = timerModel.minutesProperty().get() * 60 + timerModel.secondsProperty().get();
+            double elapsedTime = totalTimeInSeconds - currentTime;
+            double progress = elapsedTime / totalTimeInSeconds;
+
+
+            var gc = progressCanvas.getGraphicsContext2D();
+            gc.clearRect(0, 0, progressCanvas.getWidth(), progressCanvas.getHeight());
+
+            double centerX = progressCanvas.getWidth() / 2;
+            double centerY = progressCanvas.getHeight() / 2;
+            double radius = 100;
+            double strokeWidth = 20;
+
+            // Draw base circle
+            gc.setStroke(Color.LIGHTGRAY);
+            gc.setLineWidth(strokeWidth);
+            gc.strokeOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+            // Draw progress circle
+            double angle = progress * 360;
+            gc.setStroke(Color.WHITESMOKE);
+            gc.setLineWidth(strokeWidth);
+            gc.strokeArc(centerX - radius, centerY - radius, radius * 2, radius * 2,
+                    90, -angle, ArcType.OPEN);
+        });
     }
 }
