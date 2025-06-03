@@ -56,12 +56,17 @@ public class TimerModel {
                     return null;
                 }
             };
-            new Thread(timerTask).start();
+            Thread timerThread = new Thread(timerTask);
+            timerThread.setDaemon(true);
+            timerThread.start();
         }
     }
 
     public void pauseTimer() {
         isRunning = false;
+        if (timerTask != null) {
+            timerTask.cancel();
+        }
     }
 
     public void resetTimer() {

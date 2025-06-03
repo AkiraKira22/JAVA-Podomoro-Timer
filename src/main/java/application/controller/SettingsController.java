@@ -6,7 +6,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
-import application.PomodoroGUIFX;
+
+import application.MusicPlayerGUIFX;
 
 public class SettingsController {
 
@@ -42,13 +43,14 @@ public class SettingsController {
 
     @FXML
     private void handleMusicMenu() {
-        if (MainController.musicPlayerStage != null && MainController.musicPlayerStage.isShowing()) {
-            MainController.musicPlayerStage.toFront();
-            return;
-        }
-        PomodoroGUIFX musicPlayerWindow = new PomodoroGUIFX();
-        MainController.musicPlayerStage = new Stage();
-        musicPlayerWindow.start(MainController.musicPlayerStage);
-        MainController.musicPlayerStage.setOnCloseRequest(e -> MainController.musicPlayerStage = null);
+        // Open music window
+        MusicPlayerGUIFX musicPlayerWindow = new MusicPlayerGUIFX();
+        Stage stage = new Stage();
+        musicPlayerWindow.start(stage);
+    }
+
+    @FXML
+    private void handleDNDToggle() {
+        // Enable or disable Do Not Disturb feature
     }
 }

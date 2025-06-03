@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class PomodoroGUIFX extends Application {
+public class MusicPlayerGUIFX extends Application {
 
     private Label titleLabel;
     private Label artistLabel;
