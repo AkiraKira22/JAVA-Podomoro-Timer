@@ -3,21 +3,23 @@ package application.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuButton;
-//import javafx.scene.control.ToggleButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
 
 import application.MusicPlayerGUIFX;
 
 public class SettingsController {
 
-    @FXML private MenuButton timerMenu;
-    @FXML private MenuButton musicMenu;
+    // @FXML private MenuButton timerMenu;
+    // @FXML private MenuButton musicMenu;
     @FXML private CheckMenuItem dndToggle;
-    @FXML private MenuItem presetTest;
-    @FXML private MenuItem presetA;
-    @FXML private MenuItem presetB;
     @FXML private MenuItem openMusic;
+    @FXML private MenuButton timerMenuButton;
+    @FXML private MenuItem presetTest;
+    @FXML private MenuItem preset25_5;
+    @FXML private MenuItem preset50_10;
 
     private TimerPresetListener presetListener;
 
@@ -34,21 +36,31 @@ public class SettingsController {
         presetTest.setOnAction(e -> {
                     if (presetListener != null) presetListener.onPresetSelected(1, 1);
         });
-        presetA.setOnAction(e -> {
-            if (presetListener != null) presetListener.onPresetSelected(25, 5);
+        preset25_5.setOnAction(e -> {
+            if (presetListener != null) {
+                presetListener.onPresetSelected(25, 5);
+            }
         });
-        presetB.setOnAction(e -> {
-            if (presetListener != null) presetListener.onPresetSelected(50, 10);
+        preset50_10.setOnAction(e -> {
+            if (presetListener != null) {
+                presetListener.onPresetSelected(50, 10);
+            }
         });
     }
 
 
     @FXML
     private void handleMusicMenu() {
-        // Open music window
+        // Only open one music player window at a time
+        if (MainController.musicPlayerStage != null && MainController.musicPlayerStage.isShowing()) {
+            MainController.musicPlayerStage.toFront();
+            MainController.musicPlayerStage.requestFocus();
+            return;
+        }
         MusicPlayerGUIFX musicPlayerWindow = new MusicPlayerGUIFX();
-        Stage stage = new Stage();
-        musicPlayerWindow.start(stage);
+        MainController.musicPlayerStage = new Stage();
+        musicPlayerWindow.start(MainController.musicPlayerStage);
+        MainController.musicPlayerStage.setOnCloseRequest(e -> MainController.musicPlayerStage = null);
     }
 
     @FXML

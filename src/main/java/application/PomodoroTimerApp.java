@@ -10,7 +10,13 @@ public class PomodoroTimerApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/application/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/main.fxml"));
+        Parent root = loader.load();
+
+        // Pass the primaryStage to the controller
+        application.controller.MainController mainController = loader.getController();
+        mainController.setPrimaryStage(primaryStage);
+
         primaryStage.setTitle("Pomodoro Timer");
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.setResizable(false);

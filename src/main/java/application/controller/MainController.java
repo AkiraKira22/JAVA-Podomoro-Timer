@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
+import javafx.stage.Stage;
 
 public class MainController {
 
@@ -24,6 +25,23 @@ public class MainController {
     private int focusDuration = 25;
     private int restDuration = 5;
     private int totalTimeInSeconds;
+    public static javafx.stage.Stage settingsStage = null; // Add this line
+    public static javafx.stage.Stage musicPlayerStage = null; // Change from private to public
+    private Stage primaryStage;
+
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
+        // Listen for main window close and close all secondary windows
+        primaryStage.setOnCloseRequest(e -> {
+            if (settingsStage != null) {
+                settingsStage.close();
+            }
+            if (musicPlayerStage != null) {
+                musicPlayerStage.close();
+            }
+            javafx.application.Platform.exit();
+        });
+    }
 
     public MainController() {
         timerModel = new TimerModel();
@@ -104,6 +122,10 @@ public class MainController {
 
     @FXML
     private void handleSettings() {
+        if (settingsStage != null && settingsStage.isShowing()) {
+            settingsStage.toFront(); // Optionally bring it to front
+            return;
+        }
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/application/settings.fxml"));
             javafx.scene.Parent root = loader.load();
@@ -122,11 +144,12 @@ public class MainController {
                 updateTimerDisplay();
             });
 
-            javafx.stage.Stage stage = new javafx.stage.Stage();
-            stage.setTitle("Settings");
-            stage.setScene(new javafx.scene.Scene(root));
-            stage.setResizable(false);
-            stage.show();
+            settingsStage = new javafx.stage.Stage();
+            settingsStage.setTitle("Settings");
+            settingsStage.setScene(new javafx.scene.Scene(root));
+            settingsStage.setResizable(false);
+            settingsStage.setOnCloseRequest(e -> settingsStage = null); // Reset when closed
+            settingsStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,10 +160,10 @@ public class MainController {
         if (event.getClickCount() == 2) { // Double-click detect
             if (isFocusState) {
                 totalTimeInSeconds = focusDuration * 60;
-                timerModel.setTimer(focusDuration, 0); 
+                timerModel.setTimer(focusDuration, 0);
             } else {
                 totalTimeInSeconds = restDuration * 60;
-                timerModel.setTimer(restDuration, 0); 
+                timerModel.setTimer(restDuration, 0);
             }
             updateTimerDisplay();
         }
