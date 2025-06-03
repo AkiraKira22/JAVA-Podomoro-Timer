@@ -1,21 +1,20 @@
 package application.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuButton;
-//import javafx.scene.control.ToggleButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
 import application.PomodoroGUIFX;
 
 public class SettingsController {
 
-    @FXML private MenuButton timerMenu;
-    @FXML private MenuButton musicMenu;
-    @FXML private CheckMenuItem dndToggle;
-    @FXML private MenuItem presetA;
-    @FXML private MenuItem presetB;
-    @FXML private MenuItem openMusic;
+    @FXML private MenuButton timerMenuButton;
+    @FXML private MenuItem preset25_5;
+    @FXML private MenuItem preset50_10;
+    @FXML private Button openMusic;
+    @FXML private CheckBox dndToggle;
 
     private TimerPresetListener presetListener;
 
@@ -29,25 +28,27 @@ public class SettingsController {
 
     @FXML
     public void initialize() {
-        presetA.setOnAction(e -> {
-            if (presetListener != null) presetListener.onPresetSelected(25, 5);
+        preset25_5.setOnAction(e -> {
+            if (presetListener != null) {
+                presetListener.onPresetSelected(25, 5);
+            }
         });
-        presetB.setOnAction(e -> {
-            if (presetListener != null) presetListener.onPresetSelected(50, 10);
+        preset50_10.setOnAction(e -> {
+            if (presetListener != null) {
+                presetListener.onPresetSelected(50, 10);
+            }
         });
     }
-
 
     @FXML
     private void handleMusicMenu() {
-        // Open music window
+        if (MainController.musicPlayerStage != null && MainController.musicPlayerStage.isShowing()) {
+            MainController.musicPlayerStage.toFront();
+            return;
+        }
         PomodoroGUIFX musicPlayerWindow = new PomodoroGUIFX();
-        Stage stage = new Stage();
-        musicPlayerWindow.start(stage);
-    }
-
-    @FXML
-    private void handleDNDToggle() {
-        // Enable or disable Do Not Disturb feature
+        MainController.musicPlayerStage = new Stage();
+        musicPlayerWindow.start(MainController.musicPlayerStage);
+        MainController.musicPlayerStage.setOnCloseRequest(e -> MainController.musicPlayerStage = null);
     }
 }

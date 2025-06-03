@@ -6,25 +6,22 @@
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml" 
             fx:controller="application.controller.SettingsController"
-            prefHeight="300" prefWidth="400" xmlns="http://javafx.com/javafx">
+            prefHeight="300" prefWidth="400">
     <children>
         <Label text="Settings" layoutX="150" layoutY="20" textAlignment="CENTER">
             <font>
                 <Font size="24" />
             </font>
         </Label>
-
-        <MenuBar layoutY="50">
-            <Menu text="Timer">
-                <MenuItem text="25 + 5 Minutes" fx:id="presetA" />
-                <MenuItem text="50 + 10 Minutes" fx:id="presetB" />
-            </Menu>
-            <Menu text="Music">
-                <MenuItem text="Open Music Window" fx:id="openMusic" onAction="#handleMusicMenu"/>
-            </Menu>
-            <Menu text="DND">
-                <CheckMenuItem text="Enable Do Not Disturb" fx:id="dndToggle" />
-            </Menu>
-        </MenuBar>
+    <VBox alignment="CENTER" spacing="20.0" layoutX="100" layoutY="80" prefWidth="200" prefHeight="200">
+        <MenuButton fx:id="timerMenuButton" text="Timer Selection" prefWidth="180">
+            <items>
+                <MenuItem fx:id="preset25_5" text="25 + 5 Minutes"/>
+                <MenuItem fx:id="preset50_10" text="50 + 10 Minutes"/>
+            </items>
+        </MenuButton>
+        <Button fx:id="openMusic" text="Open Music" onAction="#handleMusicMenu"/>
+        <CheckBox fx:id="dndToggle" text="Enable Do Not Disturb" />
+    </VBox>
     </children>
 </AnchorPane>
