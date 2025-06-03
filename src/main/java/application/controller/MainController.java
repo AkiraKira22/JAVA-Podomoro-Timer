@@ -1,5 +1,6 @@
 package application.controller;
 
+import application.MusicPlayer;
 import application.model.TimerModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -71,12 +72,19 @@ public class MainController {
 
     @FXML
     private void handlePlayPause() {
+        MusicPlayer musicPlayer = MusicPlayer.getInstance();
         if (isRunning) {
             timerModel.pauseTimer();
             playPauseButton.setText("Play");
+            if (musicPlayer != null) {
+                musicPlayer.pauseSong();
+            }
         } else {
             timerModel.startTimer();
             playPauseButton.setText("Pause");
+            if (musicPlayer != null) {
+                musicPlayer.resumeSong();
+            }
         }
         isRunning = !isRunning;
     }

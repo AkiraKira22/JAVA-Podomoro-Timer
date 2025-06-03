@@ -20,7 +20,7 @@
                 <MenuItem text="50 + 10 Minutes" fx:id="presetB" />
             </Menu>
             <Menu text="Music">
-                <MenuItem text="Open Music Window" fx:id="openMusic" />
+                <MenuItem text="Open Music Window" fx:id="openMusic" onAction="#handleMusicMenu"/>
             </Menu>
             <Menu text="DND">
                 <CheckMenuItem text="Enable Do Not Disturb" fx:id="dndToggle" />

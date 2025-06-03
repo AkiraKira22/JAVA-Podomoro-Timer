@@ -5,6 +5,8 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuButton;
 //import javafx.scene.control.ToggleButton;
 import javafx.scene.control.MenuItem;
+import javafx.stage.Stage;
+import application.PomodoroGUIFX;
 
 public class SettingsController {
 
@@ -13,6 +15,7 @@ public class SettingsController {
     @FXML private CheckMenuItem dndToggle;
     @FXML private MenuItem presetA;
     @FXML private MenuItem presetB;
+    @FXML private MenuItem openMusic;
 
     private TimerPresetListener presetListener;
 
@@ -34,14 +37,13 @@ public class SettingsController {
         });
     }
 
-    /*@FXML
-    private void handleTimerPresetSelection() {
-        // Handle timer preset selection
-    }*/
 
     @FXML
     private void handleMusicMenu() {
         // Open music window
+        PomodoroGUIFX musicPlayerWindow = new PomodoroGUIFX();
+        Stage stage = new Stage();
+        musicPlayerWindow.start(stage);
     }
 
     @FXML

@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 public class MusicPlayer {
+    private static MusicPlayer instance;
 
     private MediaPlayer mediaPlayer;
     private final ArrayList<Song> playlist = new ArrayList<>();
@@ -20,7 +21,12 @@ public class MusicPlayer {
     private Song currentSong;
 
     public MusicPlayer(PomodoroGUIFX gui) {
+        instance = this;
         this.pomodoroGUIFX = gui;
+    }
+
+    public static MusicPlayer getInstance() {
+        return instance;
     }
 
     public void loadPlaylist(File playlistFile) {
