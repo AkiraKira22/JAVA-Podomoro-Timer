@@ -17,9 +17,10 @@ public class PomodoroGUIFX extends Application {
     private Label durationLabel;
     private Slider playbackSlider;
 
-    private Button pauseBtn;
+    private Button playPauseBtn;
 
     private MusicPlayer musicPlayer;
+    private Boolean isPlaying = false;
 
     // Default directory to open FileChooser in
     File defaultDir = new File("src/main/resources/music");
@@ -51,14 +52,19 @@ public class PomodoroGUIFX extends Application {
     }
 
     private HBox getHBox(Stage primaryStage) {
+        playPauseBtn = new Button("Play");
+        playPauseBtn.setPrefWidth(50);
+        Button nextBtn = new Button("Next");
+        nextBtn.setPrefWidth(65);
+        Button prevBtn = new Button("Previous");
+        prevBtn.setPrefWidth(65);
+        Button muteBtn = new Button("Mute");
+        muteBtn.setPrefWidth(50);
         Button loadSongBtn = new Button("Load Song");
         Button loadPlaylistBtn = new Button("Load Playlist");
+        loadPlaylistBtn.setPrefWidth(95);
         Button createPlaylistBtn = new Button("Create Playlist");
-        Button playBtn = new Button("Play");
-        pauseBtn = new Button("Pause");
-        Button nextBtn = new Button("Next");
-        Button prevBtn = new Button("Previous");
-        Button muteBtn = new Button("Mute");
+        createPlaylistBtn.setPrefWidth(95);
 
         loadSongBtn.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
@@ -72,6 +78,7 @@ public class PomodoroGUIFX extends Application {
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
                 musicPlayer.loadAndPlaySong(file);
+                setPlayingState(true);
             }
         });
 
@@ -95,13 +102,21 @@ public class PomodoroGUIFX extends Application {
             }
         });
 
-        playBtn.setOnAction(e -> musicPlayer.resumeSong());
-        pauseBtn.setOnAction(e -> musicPlayer.pauseSong());
+        playPauseBtn.setOnAction(e -> {
+            if (isPlaying) {
+                musicPlayer.pauseSong();
+                setPlayingState(false);
+            }
+            else {
+                musicPlayer.resumeSong();
+                setPlayingState(true);
+            }
+        });
         nextBtn.setOnAction(e -> musicPlayer.playNextSong());
         prevBtn.setOnAction(e -> musicPlayer.playPreviousSong());
         muteBtn.setOnAction(e -> musicPlayer.toggleMute());
 
-        HBox controls = new HBox(10, playBtn, pauseBtn, prevBtn, nextBtn, muteBtn, loadSongBtn, createPlaylistBtn, loadPlaylistBtn);
+        HBox controls = new HBox(10, playPauseBtn, prevBtn, nextBtn, muteBtn, loadSongBtn, createPlaylistBtn, loadPlaylistBtn);
         controls.setPadding(new Insets(10));
         return controls;
     }
@@ -116,10 +131,9 @@ public class PomodoroGUIFX extends Application {
         playbackSlider.setValue(progress);
     }
 
-    public void enablePauseButton() {
-        if (pauseBtn != null) {
-            pauseBtn.setDisable(false);
-        }
+    private void setPlayingState(boolean playing) {
+        isPlaying = playing;
+        playPauseBtn.setText(isPlaying ? "Pause" : "Play");
     }
 
     public static void main(String[] args) {

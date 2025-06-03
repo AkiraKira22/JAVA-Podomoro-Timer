@@ -62,7 +62,6 @@ public class MusicPlayer {
 
         mediaPlayer.play();
         pomodoroGUIFX.updateSongDisplay(song);
-        pomodoroGUIFX.enablePauseButton();
     }
 
     public void playNextSong() {
