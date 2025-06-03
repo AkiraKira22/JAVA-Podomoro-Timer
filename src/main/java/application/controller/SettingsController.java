@@ -6,7 +6,8 @@ import javafx.scene.control.MenuButton;
 //import javafx.scene.control.ToggleButton;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
-import application.PomodoroGUIFX;
+
+import application.MusicPlayerGUIFX;
 
 public class SettingsController {
 
@@ -41,7 +42,7 @@ public class SettingsController {
     @FXML
     private void handleMusicMenu() {
         // Open music window
-        PomodoroGUIFX musicPlayerWindow = new PomodoroGUIFX();
+        MusicPlayerGUIFX musicPlayerWindow = new MusicPlayerGUIFX();
         Stage stage = new Stage();
         musicPlayerWindow.start(stage);
     }
