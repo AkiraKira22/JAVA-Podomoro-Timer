@@ -12,7 +12,7 @@ public class PomodoroTimerApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/application/main.fxml"));
         primaryStage.setTitle("Pomodoro Timer");
-        primaryStage.setScene(new Scene(root, 300, 300));
+        primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.setResizable(false);
         primaryStage.show();
     }

@@ -14,6 +14,7 @@ public class SettingsController {
     @FXML private MenuButton timerMenu;
     @FXML private MenuButton musicMenu;
     @FXML private CheckMenuItem dndToggle;
+    @FXML private MenuItem presetTest;
     @FXML private MenuItem presetA;
     @FXML private MenuItem presetB;
     @FXML private MenuItem openMusic;
@@ -30,6 +31,9 @@ public class SettingsController {
 
     @FXML
     public void initialize() {
+        presetTest.setOnAction(e -> {
+                    if (presetListener != null) presetListener.onPresetSelected(1, 1);
+        });
         presetA.setOnAction(e -> {
             if (presetListener != null) presetListener.onPresetSelected(25, 5);
         });
