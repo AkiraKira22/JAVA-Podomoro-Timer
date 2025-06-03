@@ -43,10 +43,16 @@ public class SettingsController {
 
     @FXML
     private void handleMusicMenu() {
-        // Open music window
+        // Only open one music player window at a time
+        if (MainController.musicPlayerStage != null && MainController.musicPlayerStage.isShowing()) {
+            MainController.musicPlayerStage.toFront();
+            MainController.musicPlayerStage.requestFocus();
+            return;
+        }
         MusicPlayerGUIFX musicPlayerWindow = new MusicPlayerGUIFX();
-        Stage stage = new Stage();
-        musicPlayerWindow.start(stage);
+        MainController.musicPlayerStage = new Stage();
+        musicPlayerWindow.start(MainController.musicPlayerStage);
+        MainController.musicPlayerStage.setOnCloseRequest(e -> MainController.musicPlayerStage = null);
     }
 
     @FXML
