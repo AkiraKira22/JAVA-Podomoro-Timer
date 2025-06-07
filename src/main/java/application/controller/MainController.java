@@ -5,6 +5,8 @@ import application.model.TimerModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
@@ -16,6 +18,7 @@ public class MainController {
     @FXML private Label timerLabel;
     @FXML private Label stateLabel;
     @FXML private Button playPauseButton;
+    @FXML private ImageView playPauseIcon;
     @FXML private VBox mainLayout;
     @FXML private Button settingsButton;
 
@@ -104,13 +107,13 @@ public class MainController {
         MusicPlayer musicPlayer = MusicPlayer.getInstance();
         if (isRunning) {
             timerModel.pauseTimer();
-            playPauseButton.setText("Play");
+            playPauseIcon.setImage(new Image(getClass().getResource("/play_black.png").toString()));
             if (musicPlayer != null) {
                 musicPlayer.pauseSong();
             }
         } else {
             timerModel.startTimer();
-            playPauseButton.setText("Pause");
+            playPauseIcon.setImage(new Image(getClass().getResource("/pause_black.png").toString()));
             if (musicPlayer != null) {
                 musicPlayer.resumeSong();
             }
