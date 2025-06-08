@@ -1,6 +1,5 @@
 package application;
 
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -10,24 +9,30 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class MusicPlayerGUIFX extends Application {
+public class MusicPlayerGUIFX {
+
+    private Stage stage;
+    private MusicPlayer musicPlayer;
 
     private Label titleLabel;
     private Label artistLabel;
     private Label durationLabel;
     private Slider playbackSlider;
-
     private Button playPauseBtn;
 
-    private MusicPlayer musicPlayer;
-    private Boolean isPlaying = false;
+    private boolean isPlaying = false;
+    private final File defaultDir = new File("src/main/resources/music");
 
-    // Default directory to open FileChooser in
-    File defaultDir = new File("src/main/resources/music");
-
-    @Override
-    public void start(Stage primaryStage) {
+    public MusicPlayerGUIFX() {
         musicPlayer = new MusicPlayer(this);
+    }
+
+    public void showPlayerWindow() {
+        if (stage != null && stage.isShowing()) {
+            stage.toFront();
+            stage.requestFocus();
+            return;
+        }
 
         titleLabel = new Label("Title: ");
         artistLabel = new Label("Artist: ");
@@ -40,26 +45,28 @@ public class MusicPlayerGUIFX extends Application {
             musicPlayer.seekTo(value);
         });
 
-        HBox controls = getHBox(primaryStage);
+        stage = new Stage();
+        HBox controls = buildControls();
 
         VBox root = new VBox(10, titleLabel, artistLabel, durationLabel, playbackSlider, controls);
         root.setPadding(new Insets(20));
 
         Scene scene = new Scene(root, 700, 250);
-        primaryStage.setTitle("JavaFX Music Player");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        stage.setTitle("JavaFX Music Player");
+        stage.setScene(scene);
+        stage.setOnCloseRequest(e -> stage = null);
+        stage.show();
     }
 
-    private HBox getHBox(Stage primaryStage) {
+    private HBox buildControls() {
         playPauseBtn = new Button("Play");
         playPauseBtn.setPrefWidth(50);
         Button nextBtn = new Button("Next");
         nextBtn.setPrefWidth(65);
         Button prevBtn = new Button("Previous");
         prevBtn.setPrefWidth(65);
-        Button muteBtn = new Button("Mute");
-        muteBtn.setPrefWidth(50);
+        Button muteUnmuteBtn = new Button("Mute");
+        muteUnmuteBtn.setPrefWidth(60);
         Button loadSongBtn = new Button("Load Song");
         Button loadPlaylistBtn = new Button("Load Playlist");
         loadPlaylistBtn.setPrefWidth(95);
@@ -70,12 +77,10 @@ public class MusicPlayerGUIFX extends Application {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open MP3 File");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
-
             if (defaultDir.exists()) {
                 fileChooser.setInitialDirectory(defaultDir);
             }
-
-            File file = fileChooser.showOpenDialog(primaryStage);
+            File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 musicPlayer.loadAndPlaySong(file);
                 setPlayingState(true);
@@ -84,19 +89,17 @@ public class MusicPlayerGUIFX extends Application {
 
         createPlaylistBtn.setOnAction(e -> {
             MusicPlaylistDialogFX dialog = new MusicPlaylistDialogFX();
-            dialog.show(primaryStage);
+            dialog.show(stage);
         });
 
         loadPlaylistBtn.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Playlist File");
             File playlistDir = new File("src/main/resources/music/playlist");
-
             if (playlistDir.exists()) {
                 fileChooser.setInitialDirectory(playlistDir);
             }
-
-            File file = fileChooser.showOpenDialog(primaryStage);
+            File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 musicPlayer.loadPlaylist(file);
             }
@@ -106,17 +109,20 @@ public class MusicPlayerGUIFX extends Application {
             if (isPlaying) {
                 musicPlayer.pauseSong();
                 setPlayingState(false);
-            }
-            else {
+            } else {
                 musicPlayer.resumeSong();
                 setPlayingState(true);
             }
         });
+
         nextBtn.setOnAction(e -> musicPlayer.playNextSong());
         prevBtn.setOnAction(e -> musicPlayer.playPreviousSong());
-        muteBtn.setOnAction(e -> musicPlayer.toggleMute());
+        muteUnmuteBtn.setOnAction(e -> {
+            musicPlayer.toggleMute();
+            muteUnmuteBtn.setText(musicPlayer.isMuted() ? "Unmute" : "Mute");
+        });
 
-        HBox controls = new HBox(10, playPauseBtn, prevBtn, nextBtn, muteBtn, loadSongBtn, createPlaylistBtn, loadPlaylistBtn);
+        HBox controls = new HBox(10, playPauseBtn, prevBtn, nextBtn, muteUnmuteBtn, loadSongBtn, createPlaylistBtn, loadPlaylistBtn);
         controls.setPadding(new Insets(10));
         return controls;
     }
@@ -136,7 +142,7 @@ public class MusicPlayerGUIFX extends Application {
         playPauseBtn.setText(isPlaying ? "Pause" : "Play");
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public Stage getStage() {
+        return stage;
     }
 }

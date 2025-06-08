@@ -7,7 +7,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         MusicPlayerGUIFX musicPlayerGUIX = new MusicPlayerGUIFX();
-        musicPlayerGUIX.start(primaryStage);
+        musicPlayerGUIX.showPlayerWindow();
     }
 
     public static void main(String[] args) {

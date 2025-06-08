@@ -1,10 +1,10 @@
 package application.controller;
 
 import application.MusicPlayer;
+import application.MusicPlayerGUIFX;
 import application.model.TimerModel;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
@@ -12,6 +12,8 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.stage.Stage;
+
+import java.util.Objects;
 
 public class MainController {
 
@@ -21,6 +23,9 @@ public class MainController {
     @FXML private ImageView playPauseIcon;
     @FXML private VBox mainLayout;
     @FXML private Button settingsButton;
+    @FXML private Button muteUnmuteButton;
+
+    private MusicPlayerGUIFX musicPlayerWindow;
 
     private boolean isRunning = false;
     private final TimerModel timerModel;
@@ -51,6 +56,11 @@ public class MainController {
     @FXML
     public void initialize() {
         updateTimerDisplay();
+
+        MusicPlayer musicPlayer = MusicPlayer.getInstance();
+        if (musicPlayer != null && muteUnmuteButton != null) {
+            muteUnmuteButton.setText(musicPlayer.isMuted() ? "Unmute" : "Mute");
+        }
 
         totalTimeInSeconds = focusDuration * 60;
 
@@ -85,7 +95,7 @@ public class MainController {
     }
 
     private void playBellSound() {
-        String sound = getClass().getResource("/application/bell.wav").toString();
+        String sound = Objects.requireNonNull(getClass().getResource("/application/bell.wav")).toString();
         AudioClip bell = new AudioClip(sound);
         bell.play();
     }
@@ -107,13 +117,13 @@ public class MainController {
         MusicPlayer musicPlayer = MusicPlayer.getInstance();
         if (isRunning) {
             timerModel.pauseTimer();
-            playPauseIcon.setImage(new Image(getClass().getResource("/play_black.png").toString()));
+            playPauseIcon.setImage(new Image(Objects.requireNonNull(getClass().getResource("/play_black.png")).toString()));
             if (musicPlayer != null) {
                 musicPlayer.pauseSong();
             }
         } else {
             timerModel.startTimer();
-            playPauseIcon.setImage(new Image(getClass().getResource("/pause_black.png").toString()));
+            playPauseIcon.setImage(new Image(Objects.requireNonNull(getClass().getResource("/pause_black.png")).toString()));
             if (musicPlayer != null) {
                 musicPlayer.resumeSong();
             }
@@ -123,39 +133,84 @@ public class MainController {
 
     @FXML
     private void handleSettings() {
-        if (settingsStage != null && settingsStage.isShowing()) {
-            settingsStage.toFront(); // Optionally bring it to front
+        ContextMenu settingsMenu = new ContextMenu();
+
+        // Preset Submenu
+        Menu presetMenu = new Menu("Preset");
+        MenuItem preset1_1 = new MenuItem("1 + 1");
+        MenuItem preset25_5 = new MenuItem("25 + 5");
+        MenuItem preset50_10 = new MenuItem("50 + 10");
+
+        preset1_1.setOnAction(e -> applyPreset(1, 1));
+        preset25_5.setOnAction(e -> applyPreset(25, 5));
+        preset50_10.setOnAction(e -> applyPreset(50, 10));
+
+        presetMenu.getItems().addAll(preset1_1, preset25_5, preset50_10);
+
+        // Music Player
+        MenuItem openMusicPlayer = new MenuItem("Music Player");
+        openMusicPlayer.setOnAction(e -> openMusicPlayerWindow());
+
+        // DND Toggle
+        CheckMenuItem dndToggle = new CheckMenuItem("Do Not Disturb");
+        dndToggle.setOnAction(e -> handleDND(dndToggle.isSelected()));
+
+        settingsMenu.getItems().addAll(presetMenu, openMusicPlayer, dndToggle);
+
+        settingsMenu.show(settingsButton, javafx.geometry.Side.BOTTOM, 0, 10);
+    }
+
+    @FXML
+    private void handleMuteUnmute() {
+        MusicPlayer musicPlayer = MusicPlayer.getInstance();
+        if (musicPlayer != null) {
+            musicPlayer.toggleMute();
+            muteUnmuteButton.setText(musicPlayer.isMuted() ? "Unmute" : "Mute");
+        }
+    }
+
+    private void applyPreset(int focus, int rest) {
+        timerModel.pauseTimer();
+        isRunning = false;
+        playPauseIcon.setImage(new Image(Objects.requireNonNull(getClass().getResource("/play_black.png")).toString()));
+
+        this.focusDuration = focus;
+        this.restDuration = rest;
+        totalTimeInSeconds = isFocusState ? focus * 60 : rest * 60;
+        timerModel.setTimer(isFocusState ? focusDuration : restDuration, 0);
+        updateTimerDisplay();
+    }
+
+    private void openMusicPlayerWindow() {
+        if (musicPlayerWindow != null && musicPlayerWindow.getStage() != null && musicPlayerWindow.getStage().isShowing()) {
+            musicPlayerWindow.getStage().toFront();
+            musicPlayerWindow.getStage().requestFocus();
             return;
         }
+
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/application/settings.fxml"));
-            javafx.scene.Parent root = loader.load();
-
-            SettingsController settingsController = loader.getController();
-            settingsController.setTimerPresetListener((focus, rest) -> {
-                // Stop timer first
-                timerModel.pauseTimer();
-                isRunning = false;
-                playPauseButton.setText("Play");
-
-                this.focusDuration = focus;
-                this.restDuration = rest;
-                totalTimeInSeconds = isFocusState ? focus * 60 : rest * 60;
-                timerModel.setTimer(isFocusState ? focusDuration : restDuration, 0);
-                updateTimerDisplay();
-            });
-
-            settingsStage = new javafx.stage.Stage();
-            settingsStage.setTitle("Settings");
-            settingsStage.setScene(new javafx.scene.Scene(root));
-            settingsStage.setResizable(false);
-            settingsStage.setOnCloseRequest(e -> settingsStage = null); // Reset when closed
-            settingsStage.show();
+            if (musicPlayerWindow == null) {
+                musicPlayerWindow = new MusicPlayerGUIFX();
+            }
+            musicPlayerWindow.showPlayerWindow();
+            Stage stage = musicPlayerWindow.getStage();
+            if (stage != null) {
+                stage.setOnCloseRequest(e -> {
+                    musicPlayerWindow = null;  // clear instance on close
+                    musicPlayerStage = null;
+                });
+                musicPlayerStage = stage;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-   
+
+    private void handleDND(boolean enabled) {
+        // Your logic here
+        System.out.println("Do Not Disturb: " + (enabled ? "ON" : "OFF"));
+    }
+
     @FXML
     private void handleTimerClicked(javafx.scene.input.MouseEvent event) {
         if (event.getClickCount() == 2) { // Double-click detect
