@@ -173,7 +173,7 @@ public class MainController {
     private void handleSettings() {
         if (settingsStage == null) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/Settings.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/settings.fxml"));
                 Parent root = loader.load();
 
                 application.controller.SettingsController settingsController = loader.getController();

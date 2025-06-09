@@ -14,26 +14,26 @@
     </Label>
     <VBox alignment="CENTER" spacing="20.0" layoutX="100" layoutY="80" prefWidth="200" prefHeight="200">
 
-        <MenuButton fx:id="playlistMenuButton" prefWidth="180">
+        <!-- Preset MenuButton -->
+        <MenuButton text="Preset" prefWidth="120">
             <items>
-                <Menu text="Preset">
-                    <items>
-                        <MenuItem fx:id="preset1_1" text="1 + 1 Minutes"/>
-                        <MenuItem fx:id="preset25_5" text="25 + 5 Minutes"/>
-                        <MenuItem fx:id="preset50_10" text="50 + 10 Minutes"/>
-                    </items>
-                </Menu>
-                <Menu text="Playlist">
-                    <items>
-                        <MenuItem fx:id="cafePlaylist" text="Cafe"/>
-                        <MenuItem fx:id="groovyPlaylist" text="Groovy"/>
-                        <MenuItem fx:id="jazzPlaylist" text="Jazz"/>
-                        <MenuItem fx:id="lofiPlaylist" text="Lofi"/>
-                    </items>
-                </Menu>
-                <MenuItem fx:id="dndMenuItem" text="DND"/>
+                <MenuItem fx:id="preset1_1" text="1 + 1 Minutes"/>
+                <MenuItem fx:id="preset25_5" text="25 + 5 Minutes"/>
+                <MenuItem fx:id="preset50_10" text="50 + 10 Minutes"/>
             </items>
         </MenuButton>
-        <CheckBox fx:id="dndToggle" text="Enable Do Not Disturb" onAction="#handleDNDToggle"/>
+
+        <!-- Playlist MenuButton -->
+        <MenuButton fx:id="playlistMenuButton" text="Playlist" prefWidth="120">
+            <items>
+                <MenuItem fx:id="cafePlaylist" text="Cafe"/>
+                <MenuItem fx:id="groovyPlaylist" text="Groovy"/>
+                <MenuItem fx:id="jazzPlaylist" text="Jazz"/>
+                <MenuItem fx:id="lofiPlaylist" text="Lofi"/>
+            </items>
+        </MenuButton>
+
+        <!-- DND Checkbox -->
+        <CheckBox fx:id="dndToggle" text="Enable Do Not Disturb" alignment="CENTER"/>
     </VBox>
 </AnchorPane>
