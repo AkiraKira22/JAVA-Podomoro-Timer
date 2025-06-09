@@ -19,7 +19,7 @@
 
     <VBox alignment="CENTER" spacing="20.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
         <StackPane>
-            <Canvas fx:id="progressCanvas" width="230" height="230"/>
+            <Canvas fx:id="progressCanvas" width="230" height="280"/>
             <Label fx:id="timerLabel" text="25:00" style="-fx-font-size: 48px;" onMouseClicked="#handleTimerClicked"/>
         </StackPane>
 
