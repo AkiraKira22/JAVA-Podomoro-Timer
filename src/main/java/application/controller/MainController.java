@@ -9,7 +9,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
@@ -30,6 +33,8 @@ public class MainController {
     @FXML private Button muteUnmuteButton;
     @FXML private javafx.scene.canvas.Canvas progressCanvas;
     @FXML private Slider volumeSlider;
+    @FXML private HBox sessionTrackerBar;
+    @FXML private StackPane muteStack;
 
     private boolean isRunning = false;
     private final TimerModel timerModel;
@@ -39,6 +44,7 @@ public class MainController {
     private int totalTimeInSeconds;
     public static Stage settingsStage = null;
     private String currentPlaylist = "";
+    private int completedSessions = 0;
 
     public MainController() {
         timerModel = new TimerModel();
@@ -86,6 +92,9 @@ public class MainController {
             updateMuteUnmuteIcon(musicPlayer.isMuted());
         });
 
+        muteStack.setOnMouseEntered(e -> volumeSlider.setVisible(true));
+        muteStack.setOnMouseExited(e -> volumeSlider.setVisible(false));
+
         drawProgressCircle();
     }
 
@@ -96,6 +105,8 @@ public class MainController {
             updateStateDisplay();
             totalTimeInSeconds = restDuration * 60;
             timerModel.setTimer(restDuration, 0);
+
+            addCoffeeCupIcon();
         } else {
             isFocusState = true;
             updateStateDisplay();
@@ -185,7 +196,9 @@ public class MainController {
                 e.printStackTrace();
             }
         } else {
+            settingsStage.setIconified(false);
             settingsStage.toFront();
+            settingsStage.requestFocus();
         }
     }
 
@@ -220,10 +233,6 @@ public class MainController {
         totalTimeInSeconds = isFocusState ? focus * 60 : rest * 60;
         timerModel.setTimer(isFocusState ? focusDuration : restDuration, 0);
         updateTimerDisplay();
-    }
-
-    private void handleDND(boolean enabled) {
-        System.out.println("Do Not Disturb: " + (enabled ? "ON" : "OFF"));
     }
 
     @FXML
@@ -268,5 +277,28 @@ public class MainController {
             gc.strokeArc(centerX - radius, centerY - radius, radius * 2, radius * 2,
                     90, -angle, ArcType.OPEN);
         });
+    }
+
+    private void addCoffeeCupIcon() {
+        javafx.application.Platform.runLater(() -> {
+            ImageView cup;
+             if (focusDuration >= 50) {
+            // 50 min7yte: big cup
+                cup = new ImageView(new Image(getClass().getResource("/coffee_big.png").toString()));
+                cup.setFitWidth(24);
+                cup.setFitHeight(24);
+            } else {
+                // 25 minute: smol cup
+                cup = new ImageView(new Image(getClass().getResource("/coffee_small.png").toString()));
+                cup.setFitWidth(24);
+                cup.setFitHeight(24);
+            }
+            sessionTrackerBar.getChildren().add(cup);
+        });
+    }
+    @FXML
+    private void handleEndSession() {
+        timerModel.pauseTimer();
+        onTimerFinished(); 
     }
 }
