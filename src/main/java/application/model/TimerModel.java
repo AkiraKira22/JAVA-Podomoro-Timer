@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.concurrent.Task;
 import javafx.util.Duration;
 
 public class TimerModel {

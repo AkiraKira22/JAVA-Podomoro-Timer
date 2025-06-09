@@ -296,7 +296,7 @@ public class MainController {
         });
     }
     @FXML
-    private void handleEndSession() {
+    private void handleEndState() {
         timerModel.pauseTimer();
         onTimerFinished(); 
     }
