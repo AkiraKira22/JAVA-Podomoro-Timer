@@ -21,6 +21,7 @@ public class MainController {
     @FXML private Label stateLabel;
     @FXML private Button playPauseButton;
     @FXML private ImageView playPauseIcon;
+    @FXML private ImageView muteUnmuteIcon;
     @FXML private VBox mainLayout;
     @FXML private Button settingsButton;
     @FXML private Button muteUnmuteButton;
@@ -59,7 +60,7 @@ public class MainController {
 
         MusicPlayer musicPlayer = MusicPlayer.getInstance();
         if (musicPlayer != null && muteUnmuteButton != null) {
-            muteUnmuteButton.setText(musicPlayer.isMuted() ? "Unmute" : "Mute");
+            updateMuteUnmuteIcon(musicPlayer.isMuted());
         }
 
         totalTimeInSeconds = focusDuration * 60;
@@ -165,8 +166,13 @@ public class MainController {
         MusicPlayer musicPlayer = MusicPlayer.getInstance();
         if (musicPlayer != null) {
             musicPlayer.toggleMute();
-            muteUnmuteButton.setText(musicPlayer.isMuted() ? "Unmute" : "Mute");
+            updateMuteUnmuteIcon(musicPlayer.isMuted());
         }
+    }
+
+    private void updateMuteUnmuteIcon(boolean isMuted) {
+        String iconPath = isMuted ? "/mute_black.png" : "/unmute_black.png";
+        muteUnmuteIcon.setImage(new Image(Objects.requireNonNull(getClass().getResource(iconPath)).toString()));
     }
 
     private void applyPreset(int focus, int rest) {
