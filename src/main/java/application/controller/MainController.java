@@ -186,7 +186,7 @@ public class MainController {
 
                 settingsStage = new Stage();
                 settingsStage.setTitle("Settings");
-                settingsStage.setScene(new Scene(root));
+                settingsStage.setScene(new Scene(root, 300, 300));
                 settingsStage.setResizable(false);
                 settingsStage.show();
 

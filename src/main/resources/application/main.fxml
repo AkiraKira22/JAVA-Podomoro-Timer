@@ -30,8 +30,8 @@
                 onAction="#handleEndState"
                 style="-fx-font-size: 12px; -fx-background-color: #e57373; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>
 
-        <HBox alignment="CENTER" spacing="16.0">
-            <StackPane alignment="TOP_CENTER" maxWidth="24" fx:id="muteStack">
+        <HBox alignment="CENTER" spacing="16.0" style="-fx-padding: 0 10 0 0;">
+            <StackPane alignment="TOP_CENTER" fx:id="muteStack" maxWidth="24" prefWidth="24">
                 <Button fx:id="muteUnmuteButton" onAction="#handleMuteUnmute"
                         style="-fx-background-color: transparent; -fx-padding: 0; -fx-border-color: transparent;">
                     <graphic>
@@ -42,8 +42,8 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Slider fx:id="volumeSlider" 
-                        visible="false" 
+                <Slider fx:id="volumeSlider"
+                        visible="false"
                         prefWidth="60" maxWidth="60"
                         style="-fx-translate-y: 24;"/>
             </StackPane>

@@ -1,10 +1,10 @@
 package application.controller;
 
-import application.MusicPlayer;
 import application.model.SettingsModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+import application.util.DNDUtil;
 
 public class SettingsController {
 
@@ -58,11 +58,22 @@ public class SettingsController {
             selectPreset("50_10");
         });
 
+        dndToggle.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+            if (isSelected) {
+                DNDUtil.enableDND();
+            } else {
+                DNDUtil.disableDND();
+            }
+        });
+
         // Handle playlist selections
         cafePlaylist.setOnAction(e -> selectPlaylist("cafe"));
         groovyPlaylist.setOnAction(e -> selectPlaylist("groovy"));
         jazzPlaylist.setOnAction(e -> selectPlaylist("jazz"));
         lofiPlaylist.setOnAction(e -> selectPlaylist("lofi"));
+
+        preset25_5.setGraphic(new Text("✓"));
+        cafePlaylist.setGraphic(new Text("✓"));
     }
 
     private void selectPreset(String preset) {

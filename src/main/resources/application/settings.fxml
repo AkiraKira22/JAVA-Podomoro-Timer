@@ -6,14 +6,16 @@
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="application.controller.SettingsController"
-            prefHeight="300" prefWidth="400">
-    <Label text="Settings" layoutX="150" layoutY="20" textAlignment="CENTER">
-        <font>
-            <Font size="24"/>
-        </font>
-    </Label>
-    <VBox alignment="CENTER" spacing="20.0" layoutX="100" layoutY="80" prefWidth="200" prefHeight="200">
-
+            prefHeight="300" prefWidth="300">
+    
+    <VBox alignment="CENTER" spacing="20.0" 
+            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" 
+            AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+        <Label text="Settings" textAlignment="CENTER">
+                <font>
+                    <Font size="24"/>
+                </font>
+            </Label>
         <!-- Preset MenuButton -->
         <MenuButton text="Preset" prefWidth="120">
             <items>
