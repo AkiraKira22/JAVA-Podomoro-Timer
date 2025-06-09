@@ -1,4 +1,4 @@
-package application;
+/*package application;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -92,3 +92,4 @@ public class MusicPlaylistDialogFX {
         dialogStage.showAndWait();
     }
 }
+*/

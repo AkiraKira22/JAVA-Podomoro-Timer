@@ -16,21 +16,19 @@ public class Song {
     private Mp3File mp3File;
     private final String filePath;
 
-    public Song (String filePath) {
+    public Song(String filePath) {
         this.filePath = filePath;
         try {
             mp3File = new Mp3File(filePath);
             songLength = convertToSongLengthFormat();
-            
-            // Use jaudiotagger library to create an audiofile obj to read mp3 file's info
+
             AudioFile audioFile = AudioFileIO.read(new File(filePath));
             Tag tag = audioFile.getTag();
 
             if (tag != null) {
                 songTitle = tag.getFirst(FieldKey.TITLE);
                 songArtist = tag.getFirst(FieldKey.ARTIST);
-            }
-            else {
+            } else {
                 songTitle = "N/A";
                 songArtist = "N/A";
             }
@@ -41,12 +39,11 @@ public class Song {
 
     private String convertToSongLengthFormat() {
         long minutes = mp3File.getLengthInSeconds() / 60;
-        long seconds = mp3File.getLengthInSeconds() %60;
-
+        long seconds = mp3File.getLengthInSeconds() % 60;
         return String.format("%02d:%02d", minutes, seconds);
     }
 
-    // Getter
+    // Getters
     public String getSongTitle() {
         return songTitle;
     }

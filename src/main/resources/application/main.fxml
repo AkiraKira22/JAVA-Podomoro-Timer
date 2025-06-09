@@ -10,8 +10,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" 
-            fx:controller="application.controller.MainController" 
+<?import javafx.scene.control.Slider?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="application.controller.MainController"
             prefHeight="500.0" prefWidth="600.0">
 
     <VBox alignment="CENTER" spacing="20.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
@@ -23,6 +24,9 @@
         <Label fx:id="stateLabel" text="Focus" style="-fx-font-size: 24px;"/>
 
         <HBox alignment="CENTER" spacing="10.0">
+
+            <Slider fx:id="volumeSlider" max="100" value="50" prefWidth="100" />
+
             <Button fx:id="muteUnmuteButton" onAction="#handleMuteUnmute"
                     style="-fx-background-color: transparent; -fx-padding: 0; -fx-border-color: transparent;">
                 <graphic>
@@ -34,7 +38,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="playPauseButton" onAction="#handlePlayPause" 
+            <Button fx:id="playPauseButton" onAction="#handlePlayPause"
                     style="-fx-background-color: transparent; -fx-padding: 0; -fx-border-color: transparent;">
                 <graphic>
                     <ImageView fx:id="playPauseIcon" fitWidth="32" fitHeight="32">
@@ -44,7 +48,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button fx:id="settingsButton"  onAction="#handleSettings" 
+            <Button fx:id="settingsButton"  onAction="#handleSettings"
                     style="-fx-background-color: transparent; -fx-padding: 0; -fx-border-color: transparent;">
                 <graphic>
                     <ImageView fitWidth="32" fitHeight="32">
@@ -55,5 +59,6 @@
                 </graphic>
             </Button>
         </HBox>
+
     </VBox>
 </AnchorPane>

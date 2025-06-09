@@ -5,11 +5,13 @@ import javafx.beans.property.StringProperty;
 
 public class SettingsModel {
     private final StringProperty timerPreset;
+    private final StringProperty playlistName;
     private boolean dndEnabled;
 
     public SettingsModel() {
-        this.timerPreset = new SimpleStringProperty("25 + 5 minutes"); // Default preset
-        this.dndEnabled = false; // DND is disabled by default
+        this.timerPreset = new SimpleStringProperty("25 + 5 minutes");
+        this.playlistName = new SimpleStringProperty("lofi"); // Default
+        this.dndEnabled = false;
     }
 
     public String getTimerPreset() {
@@ -22,6 +24,18 @@ public class SettingsModel {
 
     public StringProperty timerPresetProperty() {
         return timerPreset;
+    }
+
+    public String getPlaylistName() {
+        return playlistName.get();
+    }
+
+    public void setPlaylistName(String playlistName) {
+        this.playlistName.set(playlistName);
+    }
+
+    public StringProperty playlistNameProperty() {
+        return playlistName;
     }
 
     public boolean isDndEnabled() {
