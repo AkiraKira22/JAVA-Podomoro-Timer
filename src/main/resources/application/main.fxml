@@ -19,13 +19,8 @@
 
     <VBox alignment="CENTER" spacing="20.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
         <StackPane>
-<<<<<<< HEAD
             <Canvas fx:id="progressCanvas" width="200" height="200"/>
             <Label fx:id="timerLabel" text="25:00" style="-fx-font-size: 28px;" onMouseClicked="#handleTimerClicked"/>
-=======
-            <Canvas fx:id="progressCanvas" width="230" height="280"/>
-            <Label fx:id="timerLabel" text="25:00" style="-fx-font-size: 48px;" onMouseClicked="#handleTimerClicked"/>
->>>>>>> 0b732ebef69731f66ef978db9270ce83c2c31e24
         </StackPane>
 
         <Label fx:id="stateLabel" text="Focus" style="-fx-font-size: 16px;"/>
