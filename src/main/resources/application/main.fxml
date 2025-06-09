@@ -10,6 +10,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.ScrollPane?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="application.controller.MainController"
@@ -61,7 +63,21 @@
                 </graphic>
             </Button>
         </HBox> 
-        <HBox fx:id="sessionTrackerBar" alignment="BOTTOM_CENTER" spacing="4"/>
+        <ScrollPane fx:id="sessionTrackerScroll"
+            prefWidth="140" maxWidth="360"
+            prefHeight="60" maxHeight="60"
+            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            fitToWidth="true"
+            style="-fx-background-color:transparent;"
+            AnchorPane.leftAnchor="20"
+            AnchorPane.topAnchor="20">
+            <content>
+                <FlowPane fx:id="sessionTrackerBar"
+                        alignment="CENTER"
+                        hgap="4" vgap="4"
+                        prefWrapLength="140"/>
+            </content>
+        </ScrollPane>
     </VBox>
 
     <Button fx:id="endSessionButton"

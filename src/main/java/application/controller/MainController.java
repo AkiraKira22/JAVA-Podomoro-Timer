@@ -9,9 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
@@ -33,7 +33,7 @@ public class MainController {
     @FXML private Button muteUnmuteButton;
     @FXML private javafx.scene.canvas.Canvas progressCanvas;
     @FXML private Slider volumeSlider;
-    @FXML private HBox sessionTrackerBar;
+    @FXML private FlowPane sessionTrackerBar;
     @FXML private StackPane muteStack;
 
     private boolean isRunning = false;
@@ -44,7 +44,6 @@ public class MainController {
     private int totalTimeInSeconds;
     public static Stage settingsStage = null;
     private String currentPlaylist = "";
-    private int completedSessions = 0;
 
     public MainController() {
         timerModel = new TimerModel();
