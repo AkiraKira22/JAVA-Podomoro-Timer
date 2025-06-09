@@ -261,8 +261,8 @@ public class MainController {
 
             double centerX = progressCanvas.getWidth() / 2;
             double centerY = progressCanvas.getHeight() / 2;
-            double radius = 100;
-            double strokeWidth = 20;
+            double radius = 80;
+            double strokeWidth = 8;
 
             // Draw base circle
             gc.setStroke(Color.LIGHTGRAY);
@@ -284,13 +284,13 @@ public class MainController {
              if (focusDuration >= 50) {
             // 50 min7yte: big cup
                 cup = new ImageView(new Image(getClass().getResource("/coffee_big.png").toString()));
-                cup.setFitWidth(24);
-                cup.setFitHeight(24);
+                cup.setFitWidth(18);
+                cup.setFitHeight(18);
             } else {
                 // 25 minute: smol cup
                 cup = new ImageView(new Image(getClass().getResource("/coffee_small.png").toString()));
-                cup.setFitWidth(24);
-                cup.setFitHeight(24);
+                cup.setFitWidth(18);
+                cup.setFitHeight(18);
             }
             sessionTrackerBar.getChildren().add(cup);
         });
