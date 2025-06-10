@@ -11,7 +11,7 @@
 - MusicPlaylistDialogFX also removed, as the background music are now presets found on the settings menu
 - The music will play/pause depending on the timer play/pause state(If timer started, music starts, and vice versa)
 - Added End State button on main controller to skip the current state(Focus/Rest)
-- Added a gimmick where whenever focus state ends, a cup of coffee will be added on the bottom, and the size varies depending on the focus time
+- Added a simple gimmick, which is a simple tracker where whenever focus state ends, a cup of coffee will be added on the bottom, and the size varies depending on the focus time. So the user can check how many session they did from the total of the coffee appeared.
 
 3) Additional notes
 - The Groovy playlist has a slight delay at the beginning of the track; this delay is part of the audio file itself and not caused by the code
