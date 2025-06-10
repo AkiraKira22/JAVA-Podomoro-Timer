@@ -1,18 +1,26 @@
-## Getting Started
+1) Project Installation Guide
+- Extract the PodomoroTimer.7z file
+- Open the PodomoroTimer folder and run the PodomoroTimer.exe file
+- The App should be launched.
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+2) Changes made to the Project
+- MainController user interface has been cleaned up
+- Buttons on the MainController are now icons
+- Added a mute/unmute functionality as well as a volume slider
+- MusicPlayerGUI is fully removed, as the music player is controlled through the MainController
+- MusicPlaylistDialogFX also removed, as the background music are now presets found on the settings menu
+- The music will play/pause depending on the timer play/pause state(If timer started, music starts, and vice versa)
+- Added End State button on main controller to skip the current state(Focus/Rest)
+- Added a gimmick where whenever focus state ends, a cup of coffee will be added on the bottom, and the size varies depending on the focus time
 
-## Folder Structure
+3) Additional notes
+- The Groovy playlist has a slight delay at the beginning of the track; this delay is part of the audio file itself and not caused by the code
+- Because JAVA cannot directly configure with Windows, we've decided that the safer method is to instruct the user to turn on DND from Windows Settings itself
+- This App only works for Windows 10/11.
 
-The workspace contains two folders by default, where:
+## Disclaimer
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+This project is intended for **educational purposes only**.  
+All content, including code, assets, and references, is used in good faith for learning and demonstration.  
+**Commercial use is strictly prohibited.**  
+All copyrights and trademarks belong to their respective owners.
